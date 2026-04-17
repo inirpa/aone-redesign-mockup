@@ -67,10 +67,10 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
       </div>
 
       {/* HERO GALLERY */}
-      <section className="px-[4vw] pt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[50vh] min-h-[400px]">
+      <section className="px-[4vw] pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-[65vh]">
           <div 
-            className="lg:col-span-8 h-full rounded-[12px] overflow-hidden relative group cursor-pointer"
+            className="lg:col-span-8 h-[380px] md:h-[500px] lg:h-full rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
             onClick={() => {
               setActiveImageIndex(0);
               setIsGalleryOpen(true);
@@ -84,9 +84,9 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
             />
             <div className="absolute inset-0 bg-brand-night/10 group-hover:bg-brand-night/0 transition-colors duration-500" />
           </div>
-          <div className="lg:col-span-4 grid grid-rows-2 gap-4 h-full">
+          <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 h-[180px] md:h-[250px] lg:h-full">
             <div 
-              className="rounded-[12px] overflow-hidden relative group cursor-pointer"
+              className="rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
               onClick={() => {
                 setActiveImageIndex(1);
                 setIsGalleryOpen(true);
@@ -100,7 +100,7 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
               />
             </div>
             <div 
-              className="rounded-[12px] overflow-hidden relative group cursor-pointer"
+              className="rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
               onClick={() => {
                 setActiveImageIndex(2);
                 setIsGalleryOpen(true);
@@ -112,7 +112,7 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-brand-night/40 flex items-center justify-center text-cream font-medium tracking-[0.2em] uppercase text-sm backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 bg-brand-night/40 flex items-center justify-center text-cream font-medium tracking-[0.2em] uppercase text-[10px] md:text-sm backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity">
                 View All Photos
               </div>
             </div>
@@ -120,21 +120,24 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
         </div>
       </section>
 
-      {/* PROPERTY TITLE BAR - MOVED BELOW IMAGES FOR BETTER CONTRAST */}
-      <section className="px-[4vw] pb-8">
-        <div className="bg-white border border-gold/20 rounded-[12px] p-8 md:p-10 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-2">
-             <div className="flex items-center gap-3">
-               <span className="bg-gold text-brand-night text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-[2px]">{property.type}</span>
-               <span className="text-slate-400 text-[11px] tracking-widest uppercase">{property.suburb}</span>
+      {/* PROPERTY TITLE BAR - EXPLICIT SEPARATION */}
+      <section className="px-[4vw] py-12 relative z-10">
+        <div className="bg-white border border-gold/20 rounded-[16px] p-8 md:p-12 shadow-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10">
+          <div className="space-y-5">
+             <div className="flex items-center gap-4">
+               <span className="bg-gold text-brand-night text-[11px] font-bold tracking-[0.25em] uppercase px-4 py-2 rounded-[2px] shadow-sm">{property.type}</span>
+               <div className="flex items-center gap-2 text-slate-400">
+                  <MapPin size={14} className="text-gold" />
+                  <span className="text-[12px] tracking-[0.2em] uppercase font-bold">{property.suburb}</span>
+               </div>
              </div>
-             <h1 className="font-serif text-[clamp(28px,3.5vw,48px)] font-medium text-brand-night leading-tight">{property.address}</h1>
+             <h1 className="font-serif text-[clamp(32px,5vw,64px)] font-medium text-brand-night leading-[1.1] tracking-tight max-w-3xl">{property.address}</h1>
           </div>
-          <div className="bg-cream/50 px-8 py-6 rounded-[8px] border border-gold/10 min-w-[240px]">
-             <p className="text-[11px] tracking-widest uppercase text-slate-400 mb-1">Price Guide</p>
-             <div className="font-serif text-4xl font-medium text-brand-night">
+          <div className="bg-cream/40 px-12 py-10 rounded-[12px] border border-gold/15 min-w-[320px] w-full lg:w-auto shadow-inner text-center lg:text-left">
+             <p className="text-[11px] tracking-[0.3em] uppercase text-gold font-bold mb-4">Market Valuation</p>
+             <div className="font-serif text-4xl md:text-6xl font-medium text-brand-night flex flex-col sm:flex-row items-baseline justify-center lg:justify-start gap-2">
                 {property.price}
-                {property.type === 'Rental' && <span className="font-sans text-[15px] font-normal text-slate-400 ml-1">/ week</span>}
+                {property.type === 'Rental' && <span className="font-sans text-[18px] font-normal text-slate-400 italic">/ week</span>}
              </div>
           </div>
         </div>
