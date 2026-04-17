@@ -370,6 +370,44 @@ export default function App() {
         </div>
       </section>
 
+      {/* SELL CTA SECTION */}
+      <section className="bg-cream px-[8vw] py-[120px] overflow-hidden">
+        <div className="max-w-[1240px] mx-auto bg-brand-night rounded-[12px] overflow-hidden flex flex-col lg:flex-row shadow-2xl relative">
+          <div className="flex-1 p-12 md:p-20 relative z-10">
+            <p className="text-[11px] tracking-[0.3em] uppercase text-gold font-bold mb-6">Sell With A ONE</p>
+            <h2 className="font-serif text-[clamp(32px,4.5vw,56px)] font-light leading-tight text-cream mb-8">
+              Maximize the <em className="italic text-gold not-italic">True Value</em> of your property
+            </h2>
+            <p className="text-[16px] leading-relaxed text-cream/60 mb-12 max-w-lg">
+              Our team combines strategic marketing, professional styling advice, and expert negotiation to ensure your home doesn't just sell — it achieves a premium result.
+            </p>
+            <div className="flex flex-wrap gap-5">
+              <a href="#contact" className="bg-gold text-brand-night px-10 py-5 text-[14px] font-bold tracking-widest uppercase rounded-[4px] hover:bg-gold-light hover:scale-105 transition-all shadow-xl">
+                Get a Free Appraisal
+              </a>
+              <a href="tel:0882777567" className="border border-white/20 text-cream px-10 py-5 text-[14px] font-bold tracking-widest uppercase rounded-[4px] hover:bg-white/5 transition-all">
+                Call Our Experts
+              </a>
+            </div>
+          </div>
+          <div className="flex-1 min-h-[400px] relative">
+            <img 
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" 
+              alt="Luxury Home Interior" 
+              className="absolute inset-0 w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-brand-night/20" />
+            <div className="absolute bottom-10 right-10 bg-cream p-8 rounded-[4px] shadow-2xl border-l-[6px] border-gold max-w-[280px] hidden sm:block">
+              <div className="text-[13px] italic font-serif text-brand-night/80 mb-2 leading-relaxed">
+                "They made selling our family home stress-free and achieved a record price for our street."
+              </div>
+              <div className="text-[11px] font-bold uppercase tracking-widest text-gold">— Client from Marion</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* WHY US */}
       <section className="bg-brand-night px-[8vw] py-[120px] grid lg:grid-cols-2 gap-20 items-center">
         <motion.div {...fadeInUp} className="max-w-xl">
