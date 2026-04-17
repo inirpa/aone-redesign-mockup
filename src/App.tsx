@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('Rent');
+  const [activeTab, setActiveTab] = useState('Sell with AONE');
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -181,16 +181,16 @@ export default function App() {
           <div className="mb-10 text-center md:text-left">
             <p className="text-[11px] tracking-[0.3em] uppercase text-gold font-bold mb-4">Property Discovery</p>
             <h2 className="font-serif text-[clamp(32px,4vw,48px)] font-light leading-tight text-cream">
-              {activeTab === 'For Rent' && <>Find your next <em className="italic text-gold not-italic">Rental</em> home</>}
-              {activeTab === 'For Sale' && <>Search premium <em className="italic text-gold not-italic">Sales</em> listings</>}
-              {activeTab === 'Sold' && <>Explore recently <em className="italic text-gold not-italic">Sold</em> properties</>}
+              {activeTab === 'Sell with AONE' && <>Discover the <em className="italic text-gold not-italic">Actual Value</em> of your home</>}
+              {activeTab === 'Buy' && <>Find your <em className="italic text-gold not-italic">Dream</em> home in Adelaide</>}
+              {activeTab === 'Rentals' && <>Explore premium <em className="italic text-gold not-italic">Rental</em> properties</>}
             </h2>
           </div>
 
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-2 md:p-3 rounded-[12px] shadow-2xl">
             {/* SEGMENTED CONTROL TABS */}
             <div className="flex bg-brand-night/50 p-1 rounded-[8px] mb-6 w-full md:w-fit border border-white/5">
-              {['For Rent', 'For Sale', 'Sold'].map((tab) => (
+              {['Sell with AONE', 'Buy', 'Rentals'].map((tab) => (
                 <button 
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -207,73 +207,48 @@ export default function App() {
 
             {/* SEARCH INPUTS GROUP */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
-              <div className="md:col-span-5 relative group">
+              <div className="md:col-span-9 relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gold/50 group-focus-within:text-gold transition-colors">
                   <MapPin size={18} />
                 </div>
-                <input 
-                  type="text" 
-                  className="w-full pl-14 pr-6 py-5 text-[15px] bg-brand-night/40 border border-white/10 text-cream outline-none rounded-[8px] focus:border-gold/50 focus:bg-brand-night/60 transition-all placeholder:text-cream/20" 
-                  placeholder={activeTab === 'Sold' ? "Enter street, suburb or postcode..." : "Where would you like to live?"} 
-                />
+                {activeTab === 'Sell with AONE' ? (
+                  <input 
+                    type="text" 
+                    className="w-full pl-14 pr-6 py-5 text-[15px] bg-brand-night/40 border border-white/10 text-cream outline-none rounded-[8px] focus:border-gold/50 focus:bg-brand-night/60 transition-all placeholder:text-cream/20" 
+                    placeholder="Enter your property address to get started..." 
+                  />
+                ) : (
+                  <select className="w-full pl-14 pr-6 py-5 text-[15px] bg-brand-night/40 border border-white/10 text-cream outline-none rounded-[8px] cursor-pointer appearance-none focus:border-gold/50 focus:bg-brand-night/60 transition-all">
+                    <option className="bg-brand-night">Select a suburb...</option>
+                    {['Adelaide CBD', 'Ascot Park', 'Brighton', 'Craigmore', 'Glenelg', 'Marion', 'Paradise'].map(suburb => (
+                      <option key={suburb} value={suburb} className="bg-brand-night">{suburb}</option>
+                    ))}
+                    <option className="bg-brand-night">Other Suburbs...</option>
+                  </select>
+                )}
+                {activeTab !== 'Sell with AONE' && (
+                   <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gold/30">
+                    <ArrowRight size={16} className="rotate-90" />
+                  </div>
+                )}
               </div>
 
-              <div className="md:col-span-3 relative">
-                <select className="w-full px-6 py-5 text-[15px] bg-brand-night/40 border border-white/10 text-cream outline-none rounded-[8px] cursor-pointer appearance-none focus:border-gold/50 focus:bg-brand-night/60 transition-all">
-                  <option className="bg-brand-night">Any Price</option>
-                  {activeTab === 'For Rent' ? (
+              <div className="md:col-span-3">
+                <button className="w-full h-full bg-gold text-brand-night py-5 px-6 rounded-[8px] text-[13px] font-bold tracking-[0.14em] uppercase transition-all hover:bg-gold-light hover:scale-[1.02] active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 group">
+                  {activeTab === 'Sell with AONE' ? (
                     <>
-                      <option className="bg-brand-night">Up to $400/wk</option>
-                      <option className="bg-brand-night">$400 – $600/wk</option>
-                      <option className="bg-brand-night">$600 – $800/wk</option>
-                      <option className="bg-brand-night">$800 – $1,000/wk</option>
-                      <option className="bg-brand-night">$1,000+/wk</option>
+                      <span>Get Appraisal</span>
+                      <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                     </>
                   ) : (
                     <>
-                      <option className="bg-brand-night">Up to $600k</option>
-                      <option className="bg-brand-night">$600k – $800k</option>
-                      <option className="bg-brand-night">$800k – $1.2M</option>
-                      <option className="bg-brand-night">$1.2M – $2M</option>
-                      <option className="bg-brand-night">$2M+</option>
+                      <Search size={18} className="group-hover:scale-110 transition-transform" />
+                      <span>Search</span>
                     </>
                   )}
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gold/30">
-                  <ArrowRight size={16} className="rotate-90" />
-                </div>
-              </div>
-
-              <div className="md:col-span-2 relative">
-                <select className="w-full px-6 py-5 text-[15px] bg-brand-night/40 border border-white/10 text-cream outline-none rounded-[8px] cursor-pointer appearance-none focus:border-gold/50 focus:bg-brand-night/60 transition-all">
-                  <option className="bg-brand-night">Beds</option>
-                  <option className="bg-brand-night">1+ Bed</option>
-                  <option className="bg-brand-night">2+ Beds</option>
-                  <option className="bg-brand-night">3+ Beds</option>
-                  <option className="bg-brand-night">4+ Beds</option>
-                  <option className="bg-brand-night">5+ Beds</option>
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gold/30">
-                  <ArrowRight size={16} className="rotate-90" />
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <button className="w-full h-full bg-gold text-brand-night py-5 px-6 rounded-[8px] text-[13px] font-bold tracking-[0.14em] uppercase transition-all hover:bg-gold-light hover:scale-[1.02] active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 group">
-                  <Search size={18} className="group-hover:scale-110 transition-transform" />
-                  <span>Search</span>
                 </button>
               </div>
             </div>
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-4 items-center justify-center md:justify-start">
-            <span className="text-[11px] uppercase tracking-widest text-cream/30">Quick Search:</span>
-            {['Adelaide CBD', 'Ascot Park', 'Craigmore', 'Marion', 'Glenelg'].map(suburb => (
-              <button key={suburb} className="text-[12px] text-cream/50 hover:text-gold transition-colors underline-offset-4 hover:underline">
-                {suburb}
-              </button>
-            ))}
           </div>
         </div>
       </section>
@@ -309,6 +284,65 @@ export default function App() {
               <div className="font-serif text-2xl font-medium text-brand-night mb-4 group-hover:text-cream transition-colors">{service.name}</div>
               <p className="text-[13px] leading-relaxed text-slate-500 group-hover:text-cream/60 transition-colors mb-8">{service.desc}</p>
               <div className="text-xl text-slate-400 group-hover:text-gold transition-colors">→</div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* SALES LISTINGS */}
+      <section className="px-[8vw] py-[120px] bg-slate-50/50" id="sales">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+          <div>
+            <p className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Market Selection</p>
+            <h2 className="font-serif text-[clamp(36px,4vw,56px)] font-light leading-[1.1] text-brand-night">
+              Properties <em className="italic text-gold not-italic">For Sale</em>
+            </h2>
+          </div>
+          <a href="#" className="text-[12px] tracking-widest uppercase no-underline text-brand-night border-b border-brand-night pb-0.5 hover:text-gold hover:border-gold transition-all">
+            Browse all sales →
+          </a>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            { suburb: 'Marion', address: '45 Diagonal Road', price: '$850,000 - $920,000', beds: 4, bath: 2, car: 2, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80' },
+            { suburb: 'Brighton', address: '78 Jetty Road', price: 'Auction', beds: 3, bath: 2, car: 2, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80' },
+            { suburb: 'Ascot Park', address: '12 Seventh Avenue', price: '$720,000', beds: 3, bath: 1, car: 1, img: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=600&q=80' }
+          ].map((list, i) => (
+            <motion.div 
+              {...fadeInUp}
+              key={i}
+              className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            >
+              <div className="h-[260px] relative overflow-hidden bg-brand-night">
+                <img 
+                  src={list.img} 
+                  alt={list.address} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute top-5 left-5 bg-brand-night text-gold text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">For Sale</div>
+                {list.price === 'Auction' && (
+                  <div className="absolute top-5 right-5 bg-gold text-brand-night text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">Auction</div>
+                )}
+              </div>
+              <div className="p-8">
+                <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-bold mb-3">{list.suburb}</p>
+                <p className="font-serif text-2xl font-medium text-brand-night mb-2 leading-tight">{list.address}</p>
+                <p className="font-serif text-xl font-medium text-brand-night/80 mb-6">
+                  {list.price}
+                </p>
+                <div className="flex gap-6 pt-5 border-t border-black/5">
+                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                    <Bed size={16} className="text-gold" /> {list.beds}
+                  </div>
+                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                    <Bath size={16} className="text-gold" /> {list.bath}
+                  </div>
+                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                    <Car size={16} className="text-gold" /> {list.car}
+                  </div>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
