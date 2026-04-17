@@ -314,26 +314,53 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
               </button>
             </div>
             
-            <div className="mt-8 pt-8 border-t border-white/10 relative z-10">
-              <div className="flex items-center gap-4 mb-6">
-                <img 
-                  src={property.agent.image} 
-                  className="w-14 h-14 rounded-full object-cover border-2 border-gold/30"
-                  alt={property.agent.name}
-                />
-                <div>
-                  <div className="text-cream font-medium text-[15px]">{property.agent.name}</div>
-                  <div className="text-[11px] text-gold uppercase tracking-widest">{property.agent.role}</div>
+            <div className="mt-8 pt-8 border-t border-white/10 relative z-10 space-y-10">
+              <p className="text-[11px] tracking-[0.3em] uppercase text-gold font-bold mb-6">Listing Agents</p>
+              
+              {[
+                {
+                  name: "Nabin Kambang",
+                  role: "Principal Director",
+                  phone: "0452 198 640",
+                  email: "nabin@aonerealestate.com.au",
+                  image: "https://aonerealestate.com.au/wp-content/uploads/2023/07/img-9-1024x1024.jpg"
+                },
+                {
+                  name: "Romarsh Hamal",
+                  role: "Director & Land Agent",
+                  phone: "0416 534 447",
+                  email: "romarsh@aonerealestate.com.au",
+                  image: "https://aonerealestate.com.au/wp-content/uploads/2023/07/cropped-img-14-scaled-1-1024x1024.jpg"
+                }
+              ].map((agent, index) => (
+                <div key={index} className="group flex flex-col gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <img 
+                        src={agent.image} 
+                        className="w-16 h-16 rounded-full object-cover border-2 border-gold/30 group-hover:border-gold transition-colors"
+                        alt={agent.name}
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gold rounded-full flex items-center justify-center text-brand-night">
+                        <Star size={10} fill="currentColor" />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-cream font-medium text-[16px] group-hover:text-gold transition-colors">{agent.name}</div>
+                      <div className="text-[10px] text-gold/70 uppercase tracking-[0.2em] font-bold mt-1">{agent.role}</div>
+                    </div>
+                  </div>
+                  <div className="space-y-2.5 bg-white/5 p-4 rounded-[8px] border border-white/5 group-hover:border-gold/20 transition-all">
+                    <a href={`tel:${agent.phone}`} className="flex items-center gap-3 text-cream/70 hover:text-gold transition-colors text-[13px] font-medium">
+                      <Phone size={14} className="text-gold" /> {agent.phone}
+                    </a>
+                    <a href={`mailto:${agent.email}`} className="flex items-center gap-3 text-cream/70 hover:text-gold transition-colors text-[13px] font-medium lowercase">
+                      <Mail size={14} className="text-gold" /> {agent.email}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-3">
-                <a href={`tel:${property.agent.phone}`} className="flex items-center gap-3 text-cream/50 hover:text-gold transition-colors text-sm">
-                  <Phone size={14} /> {property.agent.phone}
-                </a>
-                <a href={`mailto:${property.agent.email}`} className="flex items-center gap-3 text-cream/50 hover:text-gold transition-colors text-sm">
-                  <Mail size={14} /> {property.agent.email}
-                </a>
-              </div>
+              ))}
             </div>
           </div>
 
