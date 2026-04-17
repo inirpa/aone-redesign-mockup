@@ -26,11 +26,18 @@ import {
   ShieldCheck,
   Bed,
   Bath,
-  Car
+  Car,
+  Facebook,
+  Instagram,
+  Twitter,
+  ChevronDown
 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('Sell with AONE');
+  const [activeMenu, setActiveMenu] = useState('Home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -54,24 +61,168 @@ export default function App() {
             className="h-[56px] w-auto object-contain"
           />
         </div>
-        <ul className="hidden md:flex gap-9 list-none items-center">
-          {['Buy', 'Sell', 'Rent', 'Management', 'About'].map((item) => (
-            <li key={item}>
-              <a href="#" className="text-[13px] font-normal tracking-widest uppercase text-muted hover:text-brand transition-colors">
-                {item}
+        <ul className="hidden md:flex md:gap-4 lg:gap-8 xl:gap-9 list-none items-center h-full">
+          {[
+            { label: 'Buy', href: '#sales', submenu: ['Make an offer', 'Your guide to buying'] },
+            { label: 'Sell', href: '#contact' },
+            { label: 'Rent', href: '#listings' },
+            { label: 'Management', href: '#services' },
+            { label: 'About', href: '#why-us' }
+          ].map((item) => (
+            <li key={item.label} className="relative group h-full flex items-center">
+              <a 
+                href={item.href} 
+                onClick={() => setActiveMenu(item.label)}
+                className={`text-[13px] font-normal tracking-widest uppercase transition-all duration-300 flex items-center gap-1.5 py-2 relative
+                  ${activeMenu === item.label ? 'text-brand' : 'text-muted hover:text-brand'}`}
+              >
+                {item.label}
+                {item.submenu && <ChevronDown size={12} className="group-hover:rotate-180 transition-transform duration-300" />}
+                
+                {/* Active Indicator */}
+                <span className={`absolute bottom-[-2px] left-0 w-full h-[2px] bg-gold transition-transform duration-300 origin-left 
+                  ${activeMenu === item.label ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} 
+                />
               </a>
+
+              {/* Submenu */}
+              {item.submenu && (
+                <div className="absolute top-[90px] left-0 bg-white shadow-2xl border border-gold/10 min-w-[220px] py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-[80px] transition-all duration-300 z-50 rounded-[4px]">
+                  {item.submenu.map((subItem) => (
+                    <a 
+                      key={subItem} 
+                      href="#" 
+                      className="block px-6 py-3 text-[12px] tracking-widest uppercase text-muted hover:text-brand hover:bg-gold/5 transition-colors"
+                    >
+                      {subItem}
+                    </a>
+                  ))}
+                </div>
+              )}
             </li>
           ))}
-          <li>
+          <div className="hidden xl:flex gap-4 items-center">
+            <div className="h-4 w-[1px] bg-gold/30 mx-2" />
+            <a href="#" className="text-muted hover:text-brand transition-colors"><Facebook size={16} strokeWidth={1.5} /></a>
+            <a href="#" className="text-muted hover:text-brand transition-colors"><Instagram size={16} strokeWidth={1.5} /></a>
+            <a href="#" className="text-muted hover:text-brand transition-colors"><Twitter size={16} strokeWidth={1.5} /></a>
+          </div>
+          <li className="ml-2 lg:ml-0">
             <a href="#contact" className="bg-brand text-cream px-[22px] py-[10px] rounded-[2px] text-[12px] tracking-widest uppercase no-underline hover:bg-gold hover:text-brand-night transition-colors">
               Get Appraisal
             </a>
           </li>
         </ul>
-        <button className="md:hidden text-brand-night">
-          <Menu size={24} />
+        <button 
+          className="md:hidden text-brand-night hover:text-gold transition-colors p-2"
+          onClick={() => setIsMenuOpen(true)}
+        >
+          <Menu size={28} />
         </button>
       </nav>
+
+      {/* MOBILE MENU OVERLAY */}
+      <motion.div 
+        initial={false}
+        animate={{ 
+          x: isMenuOpen ? 0 : '100%',
+          opacity: isMenuOpen ? 1 : 0
+        }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed inset-0 z-[100] bg-brand-night flex flex-col p-10 md:hidden pointer-events-auto"
+        style={{ pointerEvents: isMenuOpen ? 'auto' : 'none' }}
+      >
+        <div className="flex justify-between items-center mb-10 pb-8 border-b border-white/10">
+          <img 
+            src="https://aonerealestate.com.au/wp-content/uploads/2026/04/aone-logo.png" 
+            alt="A ONE Real Estate" 
+            className="h-[48px] w-auto brightness-0 invert"
+          />
+          <button 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-gold hover:text-cream transition-colors p-2"
+          >
+            <X size={32} />
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-6 mb-auto overflow-y-auto">
+          {[
+            { label: 'Buy', href: '#sales', submenu: ['Make an offer', 'Your guide to buying'] },
+            { label: 'Sell', href: '#contact' },
+            { label: 'Rent', href: '#listings' },
+            { label: 'Management', href: '#services' },
+            { label: 'About', href: '#why-us' }
+          ].map((item) => (
+            <div key={item.label} className="flex flex-col">
+              <div className="flex items-center justify-between group">
+                <a 
+                  href={item.submenu ? undefined : item.href}
+                  onClick={(e) => {
+                    if (item.submenu) {
+                      e.preventDefault();
+                      setMobileSubmenu(mobileSubmenu === item.label ? null : item.label);
+                    } else {
+                      setActiveMenu(item.label);
+                      setIsMenuOpen(false);
+                    }
+                  }}
+                  className="font-serif text-4xl text-cream hover:text-gold transition-colors flex-1"
+                >
+                  {item.label}
+                </a>
+                {item.submenu ? (
+                  <button 
+                    onClick={() => setMobileSubmenu(mobileSubmenu === item.label ? null : item.label)}
+                    className={`p-4 text-gold transition-transform duration-300 ${mobileSubmenu === item.label ? 'rotate-180' : ''}`}
+                  >
+                    <ChevronDown size={28} />
+                  </button>
+                ) : (
+                  <ArrowRight size={24} className="text-gold opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" />
+                )}
+              </div>
+              
+              {item.submenu && mobileSubmenu === item.label && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="flex flex-col gap-4 pl-6 mt-4 border-l border-gold/20"
+                >
+                  {item.submenu.map((subItem) => (
+                    <a 
+                      key={subItem} 
+                      href="#" 
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-cream/60 hover:text-gold text-lg tracking-widest uppercase py-2"
+                    >
+                      {subItem}
+                    </a>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+          ))}
+          <a 
+            href="#contact" 
+            onClick={() => setIsMenuOpen(false)}
+            className="mt-6 bg-gold text-brand-night px-8 py-5 text-[14px] font-bold tracking-widest uppercase rounded-[4px] text-center"
+          >
+            Get Appraisal
+          </a>
+        </nav>
+
+        <div className="pt-10 border-t border-white/10 flex flex-col gap-6">
+          <div className="flex gap-6">
+            <a href="#" className="text-gold hover:text-cream transition-colors"><Facebook size={24} /></a>
+            <a href="#" className="text-gold hover:text-cream transition-colors"><Instagram size={24} /></a>
+            <a href="#" className="text-gold hover:text-cream transition-colors"><Twitter size={24} /></a>
+          </div>
+          <div className="text-[12px] text-cream/30 tracking-widest uppercase">
+            RLA 309133 · Adelaide, SA
+          </div>
+        </div>
+      </motion.div>
 
       {/* HERO */}
       <section className="grid md:grid-cols-2 pt-[72px] min-h-screen">
@@ -668,9 +819,20 @@ export default function App() {
                 className="h-[48px] w-auto object-contain brightness-0 invert" 
               />
             </div>
-            <p className="text-[13px] leading-relaxed text-cream/45">
+            <p className="text-[13px] leading-relaxed text-cream/45 mb-8">
               Adelaide's trusted property specialists — delivering exceptional results for buyers, sellers, landlords and tenants across South Australia.
             </p>
+            <div className="flex gap-5">
+              <a href="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-cream/30 hover:text-gold hover:border-gold transition-all duration-300">
+                <Facebook size={18} strokeWidth={1.5} />
+              </a>
+              <a href="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-cream/30 hover:text-gold hover:border-gold transition-all duration-300">
+                <Instagram size={18} strokeWidth={1.5} />
+              </a>
+              <a href="#" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-cream/30 hover:text-gold hover:border-gold transition-all duration-300">
+                <Twitter size={18} strokeWidth={1.5} />
+              </a>
+            </div>
           </div>
           <div>
             <p className="text-[11px] tracking-[0.15em] uppercase text-gold mb-5">Services</p>
