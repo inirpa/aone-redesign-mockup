@@ -8,8 +8,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import PropertyDetails from './components/PropertyDetails';
 import { 
   Home, 
   Search, 
@@ -38,6 +39,12 @@ export default function App() {
   const [activeMenu, setActiveMenu] = useState('Home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+  const [viewedProperty, setViewedProperty] = useState<any | null>(null);
+
+  // Scroll to top on page switch
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [viewedProperty]);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -54,7 +61,7 @@ export default function App() {
     <div className="min-h-screen bg-cream font-sans text-brand-night scroll-smooth">
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[4vw] h-[90px] bg-cream/98 backdrop-blur-xl border-b border-gold/30 shadow-sm transition-all duration-300">
-        <div className="flex items-center">
+        <div className="flex items-center cursor-pointer" onClick={() => setViewedProperty(null)}>
           <img 
             src="https://aonerealestate.com.au/wp-content/uploads/2026/04/aone-logo.png" 
             alt="A ONE Real Estate" 
@@ -224,8 +231,18 @@ export default function App() {
         </div>
       </motion.div>
 
-      {/* HERO */}
-      <section className="grid md:grid-cols-2 pt-[72px] min-h-screen">
+      <AnimatePresence mode="wait">
+        {viewedProperty ? (
+          <PropertyDetails property={viewedProperty} onBack={() => setViewedProperty(null)} key="details" />
+        ) : (
+          <motion.div 
+            key="home"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* HERO */}
+            <section className="grid md:grid-cols-2 pt-[72px] min-h-screen">
         <div className="flex flex-col justify-center px-[8vw] py-20">
           <motion.p 
             initial={{ opacity: 0, x: -20 }}
@@ -455,13 +472,80 @@ export default function App() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
-            { suburb: 'Marion', address: '45 Diagonal Road', price: '$850,000 - $920,000', beds: 4, bath: 2, car: 2, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80' },
-            { suburb: 'Brighton', address: '78 Jetty Road', price: 'Auction', beds: 3, bath: 2, car: 2, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80' },
-            { suburb: 'Ascot Park', address: '12 Seventh Avenue', price: '$720,000', beds: 3, bath: 1, car: 1, img: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=600&q=80' }
+            { 
+              suburb: 'Marion', 
+              address: '45 Diagonal Road', 
+              price: '$850,000 - $920,000', 
+              beds: 4, 
+              bath: 2, 
+              car: 2, 
+              type: 'For Sale',
+              description: 'This masterfully designed 4-bedroom residence in the heart of Marion represents the pinnacle of modern suburban living. Boasting expansive living areas and high-end finishes...',
+              img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
+              images: [
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200',
+                'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800',
+                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
+              ],
+              agent: {
+                name: 'Sarah Johnson',
+                role: 'Senior Sales Agent',
+                phone: '0400 123 456',
+                email: 'sarah@aonerealestate.com.au',
+                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
+              }
+            },
+            { 
+              suburb: 'Brighton', 
+              address: '78 Jetty Road', 
+              price: 'Auction', 
+              beds: 3, 
+              bath: 2, 
+              car: 2, 
+              type: 'For Sale',
+              description: 'A coastal masterpiece just moments from the pristine sands of Brighton Beach. This 3-bedroom jewel offers an unparalleled lifestyle in one of Adelaide\'s most sought-after locations...',
+              img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80',
+              images: [
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200',
+                'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800',
+                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
+              ],
+              agent: {
+                name: 'Michael Chen',
+                role: 'Area Specialist',
+                phone: '0411 987 654',
+                email: 'michael@aonerealestate.com.au',
+                image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300'
+              }
+            },
+            { 
+              suburb: 'Ascot Park', 
+              address: '12 Seventh Avenue', 
+              price: '$720,000', 
+              beds: 3, 
+              bath: 1, 
+              car: 1, 
+              type: 'For Sale',
+              description: 'Retain the character of the past while enjoying modern amenities in this beautifully maintained 1950s cottage. Perfect for first home buyers or savvy investors looking for a prime location...',
+              img: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=600&q=80',
+              images: [
+                'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200',
+                'https://images.unsplash.com/photo-1600585154526-990dcea4db0d?auto=format&fit=crop&w=800',
+                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
+              ],
+              agent: {
+                name: 'Sarah Johnson',
+                role: 'Senior Sales Agent',
+                phone: '0400 123 456',
+                email: 'sarah@aonerealestate.com.au',
+                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
+              }
+            }
           ].map((list, i) => (
             <motion.div 
               {...fadeInUp}
               key={i}
+              onClick={() => setViewedProperty(list)}
               className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
             >
               <div className="h-[260px] relative overflow-hidden bg-brand-night">
@@ -514,13 +598,80 @@ export default function App() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            { suburb: 'Craigmore', address: '23 Chelmsford Street', price: '$680', beds: 4, bath: 2, car: 2, img: 'https://aonerealestate.com.au/wp-content/uploads/2026/03/uploads1773975848813-zz94m7n96u-062143486b6658ee93177071924e7184main.jpg' },
-            { suburb: 'Dover Gardens', address: '121B Sturt Road', price: '$750', beds: 3, bath: 2, car: 1, img: 'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774496182720-jdaqa9xht7t-f3fef655796da46e15bacd2885542c54AB240598_hdr-1.jpg' },
-            { suburb: 'Paradise', address: '18 Clark Crescent', price: '$690', beds: 4, bath: 2, car: 2, img: 'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774837414656-85p0k3u8puk-28494fa9800ffb261acb1e70437083aemain.jpg' }
+            { 
+              suburb: 'Craigmore', 
+              address: '23 Chelmsford Street', 
+              price: '$680', 
+              beds: 4, 
+              bath: 2, 
+              car: 2, 
+              type: 'Rental',
+              description: 'Experience refined living in this contemporary family residence located in the heart of Craigmore. This spacious 4-bedroom home offers a perfect blend of modern comfort and functional design...',
+              img: 'https://aonerealestate.com.au/wp-content/uploads/2026/03/uploads1773975848813-zz94m7n96u-062143486b6658ee93177071924e7184main.jpg',
+              images: [
+                'https://aonerealestate.com.au/wp-content/uploads/2026/03/uploads1773975848813-zz94m7n96u-062143486b6658ee93177071924e7184main.jpg',
+                'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800',
+                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
+              ],
+              agent: {
+                name: 'Sarah Johnson',
+                role: 'Senior Property Manager',
+                phone: '0400 123 456',
+                email: 'sarah@aonerealestate.com.au',
+                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
+              }
+            },
+            { 
+              suburb: 'Dover Gardens', 
+              address: '121B Sturt Road', 
+              price: '$750', 
+              beds: 3, 
+              bath: 2, 
+              car: 1, 
+              type: 'Rental',
+              description: 'Exquisitely renovated and perfectly positioned, this 3-bedroom townhouse in Dover Gardens provides a sophisticated urban oasis. Featuring high ceilings, open-plan living, and a private courtyard...',
+              img: 'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774496182720-jdaqa9xht7t-f3fef655796da46e15bacd2885542c54AB240598_hdr-1.jpg',
+              images: [
+                'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774496182720-jdaqa9xht7t-f3fef655796da46e15bacd2885542c54AB240598_hdr-1.jpg',
+                'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=800',
+                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
+              ],
+              agent: {
+                name: 'Michael Chen',
+                role: 'Property Manager',
+                phone: '0411 987 654',
+                email: 'michael@aonerealestate.com.au',
+                image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300'
+              }
+            },
+            { 
+              suburb: 'Paradise', 
+              address: '18 Clark Crescent', 
+              price: '$690', 
+              beds: 4, 
+              bath: 2, 
+              car: 2, 
+              type: 'Rental',
+              description: 'A delightful family retreat in the serene suburb of Paradise. This 4-bedroom home is designed for both entertainment and relaxation, featuring two spacious living zones and a north-facing deck...',
+              img: 'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774837414656-85p0k3u8puk-28494fa9800ffb261acb1e70437083aemain.jpg',
+              images: [
+                'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774837414656-85p0k3u8puk-28494fa9800ffb261acb1e70437083aemain.jpg',
+                'https://images.unsplash.com/photo-1600585154526-990dcea4db0d?auto=format&fit=crop&w=800',
+                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
+              ],
+              agent: {
+                name: 'Sarah Johnson',
+                role: 'Senior Property Manager',
+                phone: '0400 123 456',
+                email: 'sarah@aonerealestate.com.au',
+                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
+              }
+            }
           ].map((list, i) => (
             <motion.div 
               {...fadeInUp}
               key={i}
+              onClick={() => setViewedProperty(list)}
               className="bg-card rounded-[4px] overflow-hidden border border-black/5 hover:-translate-y-1 transition-transform cursor-pointer"
             >
               <div className="h-[220px] relative overflow-hidden bg-brand-night">
@@ -807,6 +958,9 @@ export default function App() {
           </div>
         </div>
       </section>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* FOOTER */}
       <footer className="bg-brand-night px-[8vw] pt-16 pb-10 border-t border-white/5">
