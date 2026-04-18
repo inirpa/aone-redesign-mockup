@@ -11,6 +11,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import PropertyDetails from './components/PropertyDetails';
+import MakeAnOffer from './components/MakeAnOffer';
+import BuyingGuide from './components/BuyingGuide';
+import AboutUs from './components/AboutUs';
 import { 
   Home, 
   Search, 
@@ -40,11 +43,15 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const [viewedProperty, setViewedProperty] = useState<any | null>(null);
+  const [showOfferPage, setShowOfferPage] = useState(false);
+  const [showGuidePage, setShowGuidePage] = useState(false);
+  const [showAboutPage, setShowAboutPage] = useState(false);
+  const [initialOfferAddress, setInitialOfferAddress] = useState('');
 
   // Scroll to top on page switch
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [viewedProperty]);
+  }, [viewedProperty, showOfferPage, showGuidePage, showAboutPage]);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -61,7 +68,7 @@ export default function App() {
     <div className="min-h-screen bg-cream font-sans text-brand-night scroll-smooth">
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[4vw] h-[90px] bg-cream/98 backdrop-blur-xl border-b border-gold/30 shadow-sm transition-all duration-300">
-        <div className="flex items-center cursor-pointer" onClick={() => setViewedProperty(null)}>
+        <div className="flex items-center cursor-pointer" onClick={() => { setViewedProperty(null); setShowOfferPage(false); setShowGuidePage(false); setShowAboutPage(false); }}>
           <img 
             src="https://aonerealestate.com.au/wp-content/uploads/2026/04/aone-logo.png" 
             alt="A ONE Real Estate" 
@@ -79,7 +86,17 @@ export default function App() {
             <li key={item.label} className="relative group h-full flex items-center">
               <a 
                 href={item.href} 
-                onClick={() => setActiveMenu(item.label)}
+                onClick={(e) => {
+                  if (item.label === 'About') {
+                    e.preventDefault();
+                    setViewedProperty(null);
+                    setShowOfferPage(false);
+                    setShowGuidePage(false);
+                    setShowAboutPage(true);
+                  } else {
+                    setActiveMenu(item.label);
+                  }
+                }}
                 className={`text-[13px] font-normal tracking-widest uppercase transition-all duration-300 flex items-center gap-1.5 py-2 relative
                   ${activeMenu === item.label ? 'text-brand' : 'text-muted hover:text-brand'}`}
               >
@@ -99,6 +116,19 @@ export default function App() {
                     <a 
                       key={subItem} 
                       href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (subItem === 'Make an offer') {
+                          setViewedProperty(null);
+                          setInitialOfferAddress('');
+                          setShowOfferPage(true);
+                          setShowGuidePage(false);
+                        } else if (subItem === 'Your guide to buying') {
+                          setViewedProperty(null);
+                          setShowOfferPage(false);
+                          setShowGuidePage(true);
+                        }
+                      }}
                       className="block px-6 py-3 text-[12px] tracking-widest uppercase text-muted hover:text-brand hover:bg-gold/5 transition-colors"
                     >
                       {subItem}
@@ -166,7 +196,14 @@ export default function App() {
                 <a 
                   href={item.submenu ? undefined : item.href}
                   onClick={(e) => {
-                    if (item.submenu) {
+                    if (item.label === 'About') {
+                      e.preventDefault();
+                      setViewedProperty(null);
+                      setShowOfferPage(false);
+                      setShowGuidePage(false);
+                      setShowAboutPage(true);
+                      setIsMenuOpen(false);
+                    } else if (item.submenu) {
                       e.preventDefault();
                       setMobileSubmenu(mobileSubmenu === item.label ? null : item.label);
                     } else {
@@ -200,7 +237,20 @@ export default function App() {
                     <a 
                       key={subItem} 
                       href="#" 
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsMenuOpen(false);
+                        if (subItem === 'Make an offer') {
+                          setViewedProperty(null);
+                          setInitialOfferAddress('');
+                          setShowOfferPage(true);
+                          setShowGuidePage(false);
+                        } else if (subItem === 'Your guide to buying') {
+                          setViewedProperty(null);
+                          setShowOfferPage(false);
+                          setShowGuidePage(true);
+                        }
+                      }}
                       className="text-cream/60 hover:text-gold text-lg tracking-widest uppercase py-2"
                     >
                       {subItem}
@@ -233,7 +283,29 @@ export default function App() {
 
       <AnimatePresence mode="wait">
         {viewedProperty ? (
-          <PropertyDetails property={viewedProperty} onBack={() => setViewedProperty(null)} key="details" />
+          <PropertyDetails 
+            property={viewedProperty} 
+            onBack={() => setViewedProperty(null)} 
+            onMakeOffer={() => {
+              setInitialOfferAddress(viewedProperty.address);
+              setViewedProperty(null);
+              setShowOfferPage(true);
+            }} 
+            key="details" 
+          />
+        ) : showOfferPage ? (
+          <MakeAnOffer 
+            initialAddress={initialOfferAddress}
+            onBack={() => {
+              setShowOfferPage(false);
+              setInitialOfferAddress('');
+            }} 
+            key="offer" 
+          />
+        ) : showGuidePage ? (
+          <BuyingGuide onBack={() => setShowGuidePage(false)} key="guide" />
+        ) : showAboutPage ? (
+          <AboutUs onBack={() => setShowAboutPage(false)} key="about" />
         ) : (
           <motion.div 
             key="home"

@@ -28,10 +28,11 @@ import {
 interface PropertyDetailsProps {
   property: any;
   onBack: () => void;
+  onMakeOffer: () => void;
   key?: string;
 }
 
-export default function PropertyDetails({ property, onBack }: PropertyDetailsProps) {
+export default function PropertyDetails({ property, onBack, onMakeOffer }: PropertyDetailsProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -304,9 +305,12 @@ export default function PropertyDetails({ property, onBack }: PropertyDetailsPro
             <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
             
             <div className="relative z-10 space-y-6">
-              <button className="w-full bg-gold text-brand-night py-5 px-6 rounded-[8px] text-[13px] font-bold tracking-[0.14em] uppercase transition-all hover:bg-gold-light hover:scale-[1.02] shadow-xl flex items-center justify-center gap-3">
+              <button 
+                onClick={property.type === 'For Sale' ? onMakeOffer : undefined}
+                className="w-full bg-gold text-brand-night py-5 px-6 rounded-[8px] text-[13px] font-bold tracking-[0.14em] uppercase transition-all hover:bg-gold-light hover:scale-[1.02] shadow-xl flex items-center justify-center gap-3"
+              >
                 <FileText size={18} />
-                <span>Apply Now</span>
+                <span>{property.type === 'For Sale' ? 'Make an Offer' : 'Apply Now'}</span>
               </button>
               <button className="w-full border border-white/20 text-cream py-5 px-6 rounded-[8px] text-[13px] font-bold tracking-[0.14em] uppercase transition-all hover:bg-white/5 flex items-center justify-center gap-3">
                 <Calendar size={18} />
