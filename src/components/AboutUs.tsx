@@ -32,8 +32,8 @@ export default function AboutUs({ onBack }: AboutUsProps) {
       icon: <Users className="w-8 h-8" />
     },
     {
-      title: "Nepali Property Partners",
-      desc: "Proudly serving the Nepali community in South Australia with bilingual expertise and cultural understanding.",
+      title: "Multicultural Property Partners",
+      desc: "Proudly serving the diverse community of South Australia with multilingual expertise and cultural understanding.",
       icon: <Languages className="w-8 h-8" />
     },
     {

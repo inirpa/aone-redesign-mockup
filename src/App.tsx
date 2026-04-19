@@ -833,7 +833,7 @@ export default function App() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5">
           {[
             { icon: <Star size={24} />, title: 'Local Expertise', desc: 'Deep knowledge of Adelaide suburbs and the SA property market.' },
-            { icon: <Languages size={24} />, title: 'Bilingual Service', desc: 'Nepali-speaking agents ensure nothing is lost in translation.' },
+            { icon: <Languages size={24} />, title: 'Multilingual Service', desc: 'Our diverse team ensures seamless communication across various languages and cultures.' },
             { icon: <ShieldCheck size={24} />, title: 'Transparent Reporting', desc: 'Clear financial statements and proactive communication.' },
             { icon: <CircleCheck size={24} />, title: 'Proven Results', desc: 'Trusted by investors and families across South Australia.' }
           ].map((item, i) => (
