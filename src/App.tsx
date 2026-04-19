@@ -34,7 +34,10 @@ import {
   Facebook,
   Instagram,
   Twitter,
-  ChevronDown
+  ChevronDown,
+  Key,
+  TrendingUp,
+  Handshake
 } from 'lucide-react';
 
 export default function App() {
@@ -375,10 +378,10 @@ export default function App() {
         </div>
 
         <div className="relative overflow-hidden bg-brand min-h-[600px] hidden md:block">
-          <div className="absolute inset-0 flex items-center justify-center opacity-20">
-            <div className="absolute top-[10%] right-[8%] w-[200px] height-[200px] border border-gold/15 rounded-full" />
-            <div className="absolute top-[25%] right-[20%] w-[120px] height-[120px] border border-gold/25 rounded-full" />
-            <div className="absolute bottom-[30%] left-[10%] w-[300px] height-[300px] border border-gold/10 rotate-45" />
+          <div className="absolute inset-0 flex items-center justify-center opacity-30">
+            <div className="absolute top-[10%] right-[8%] w-[200px] h-[200px] border border-gold/40 rounded-full" />
+            <div className="absolute top-[25%] right-[20%] w-[120px] h-[120px] border border-gold/50 rounded-full" />
+            <div className="absolute bottom-[30%] left-[10%] w-[300px] h-[300px] border border-gold/30 rotate-45" />
           </div>
 
           <div className="absolute top-9 left-9 bg-cream/10 border border-gold/20 rounded-[2px] px-5 py-3 flex items-center gap-2.5">
@@ -393,19 +396,104 @@ export default function App() {
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-brand/40" />
+            <div className="absolute inset-0 bg-brand/30" />
           </div>
 
+          {/* New Engaging Geometric Elements */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Architectural Grid Overlay */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#C9A96E 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            
+            {/* Dynamic Shape Cluster - Top Left */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="absolute top-[15%] left-[10%] w-32 h-32 border border-gold/60 rounded-full" 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1, duration: 1 }}
+              className="absolute top-[18%] left-[12%] w-24 h-24 border border-gold/40 rounded-full" 
+            />
+
+            {/* Agent Badge - Interactive Element */}
+            <motion.div 
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.2, type: 'spring' }}
+              className="absolute top-[20%] right-[-5%] bg-white/95 backdrop-blur-md p-6 rounded-l-[12px] shadow-2xl border-l-[6px] border-gold flex items-center gap-5 pointer-events-auto hover:-translate-x-4 transition-transform duration-500"
+            >
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold/20">
+                <img src="https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Agent" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <span className="block text-[10px] tracking-widest uppercase text-gold font-bold mb-1">Our Featured Expert</span>
+                <span className="block text-[15px] font-medium text-brand-night">Speak with our Advisors</span>
+                <div className="flex gap-1 mt-1">
+                  {[1,2,3,4,5].map(s => <Star key={s} size={10} fill="#C9A96E" className="text-gold" />)}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Metric Card 1 - Engagement */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.4 }}
+              className="absolute bottom-[25%] left-[8%] bg-brand-night/90 backdrop-blur-md p-6 rounded-[8px] border border-white/10 shadow-3xl pointer-events-auto group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-brand-night transition-colors">
+                  <Star size={20} />
+                </div>
+                <div>
+                  <span className="block text-2xl font-serif text-cream">4.9/5</span>
+                  <span className="block text-[10px] tracking-widest uppercase text-gold/60 mt-0.5">Adelaide's Rating</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Floating Rectangle - Aesthetic Balance */}
+            <motion.div 
+              initial={{ rotate: 15, opacity: 0 }}
+              animate={{ rotate: -15, opacity: 1 }}
+              transition={{ delay: 1, duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+              className="absolute top-[40%] right-[15%] w-16 h-40 border border-gold/20 hidden xl:block"
+            />
+          </div>
+
+          {/* Refined Feature Display */}
           <motion.div 
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-            className="absolute bottom-12 left-10 right-10 bg-cream/95 backdrop-blur-md rounded-[4px] p-8 flex gap-4 items-start border border-gold/20"
+            transition={{ delay: 1.6 }}
+            className="absolute bottom-12 left-10 right-10 bg-white/95 backdrop-blur-md rounded-[8px] p-8 border border-gold/10 shadow-2xl flex flex-wrap md:flex-nowrap justify-between items-center"
           >
-            <div className="bg-gold text-brand-night text-[10px] font-medium tracking-[0.12em] uppercase px-3 py-1.5 rounded-[2px] whitespace-nowrap">New Listing</div>
-            <div className="text-brand-night">
-              <strong className="block text-[15px] font-medium mb-1">23 Chelmsford St, Craigmore</strong>
-              <span className="text-[13px] text-slate-500">4 bed · 2 bath · 2 car — $680/week</span>
+            <div className="flex gap-6 items-center">
+              <div className="hidden sm:block">
+                <div className="w-14 h-14 rounded-full bg-brand-night flex items-center justify-center text-gold">
+                  <MapPin size={24} />
+                </div>
+              </div>
+              <div>
+                <p className="text-[11px] tracking-widest uppercase text-gold font-bold mb-1">Current Focus</p>
+                <h3 className="text-[17px] font-serif font-medium text-brand-night leading-snug">
+                  Unlocking Premium <br className="hidden lg:block" /> Opportunities in South Australia
+                </h3>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6 md:mt-0">
+              <div className="bg-gold/5 px-6 py-3 border border-gold/20 rounded-[4px] text-center">
+                <span className="block text-xl font-serif text-brand-night">320+</span>
+                <span className="block text-[9px] tracking-widest uppercase text-gold font-bold">Active Listings</span>
+              </div>
+              <div className="bg-gold px-6 py-3 rounded-[4px] text-center flex flex-col justify-center cursor-pointer hover:bg-brand-night hover:text-gold transition-colors group">
+                <span className="block text-[11px] tracking-widest uppercase font-bold">Inquire Now</span>
+                <ArrowRight size={14} className="mx-auto mt-1 group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -509,8 +597,8 @@ export default function App() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0.5">
           {[
             { id: '01', icon: <Home />, name: 'Buy', desc: 'Find your ideal home across Adelaide. We guide you through every step, from first inspection to settlement.' },
-            { id: '02', icon: <ArrowRight />, name: 'Sell', desc: 'Strategic marketing and expert negotiation to achieve the best possible price in the current market.' },
-            { id: '03', icon: <Languages />, name: 'Rent', desc: 'Quality rental properties to suit every lifestyle and budget, with responsive support throughout your tenancy.' },
+            { id: '02', icon: <TrendingUp />, name: 'Sell', desc: 'Strategic marketing and expert negotiation to achieve the best possible price in the current market.' },
+            { id: '03', icon: <Key />, name: 'Rent', desc: 'Quality rental properties to suit every lifestyle and budget, with responsive support throughout your tenancy.' },
             { id: '04', icon: <Briefcase />, name: 'Manage', desc: 'End-to-end investment property management — tenant sourcing, rent collection, maintenance and reporting.' }
           ].map((service) => (
             <motion.div 
@@ -520,7 +608,7 @@ export default function App() {
             >
               <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-gold transition-all duration-500 group-hover:w-full" />
               <div className="text-2xl mb-8 text-gold transition-colors">{service.icon}</div>
-              <div className="absolute top-6 right-7 font-serif text-5xl font-light text-black/[0.03] leading-none group-hover:text-white/[0.03] transition-colors">{service.id}</div>
+              <div className="absolute top-6 right-7 font-serif text-5xl font-light text-black/[0.12] leading-none group-hover:text-white/[0.12] transition-colors">{service.id}</div>
               <div className="font-serif text-2xl font-medium text-brand-night mb-4 group-hover:text-cream transition-colors">{service.name}</div>
               <p className="text-[13px] leading-relaxed text-slate-500 group-hover:text-cream/60 transition-colors mb-8">{service.desc}</p>
               <div className="text-xl text-slate-400 group-hover:text-gold transition-colors">→</div>
