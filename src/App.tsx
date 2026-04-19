@@ -35,9 +35,14 @@ import {
   Instagram,
   Twitter,
   ChevronDown,
+  ChevronLeft,
   Key,
   TrendingUp,
-  Handshake
+  Handshake,
+  BarChart3,
+  PieChart,
+  Target,
+  Download
 } from 'lucide-react';
 
 export default function App() {
@@ -581,44 +586,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* SERVICES */}
-      <section className="px-[8vw] py-[120px]">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
-          <div>
-            <p className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">What We Do</p>
-            <h2 className="font-serif text-[clamp(36px,4vw,56px)] font-light leading-[1.1] text-brand-night">
-              Complete Property<br /><em className="italic text-gold not-italic">Solutions</em>
-            </h2>
-          </div>
-          <a href="#" className="text-[12px] tracking-widest uppercase no-underline text-brand-night border-b border-brand-night pb-0.5 hover:text-gold hover:border-gold transition-all">
-            View all services →
-          </a>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0.5">
-          {[
-            { id: '01', icon: <Home />, name: 'Buy', desc: 'Find your ideal home across Adelaide. We guide you through every step, from first inspection to settlement.' },
-            { id: '02', icon: <TrendingUp />, name: 'Sell', desc: 'Strategic marketing and expert negotiation to achieve the best possible price in the current market.' },
-            { id: '03', icon: <Key />, name: 'Rent', desc: 'Quality rental properties to suit every lifestyle and budget, with responsive support throughout your tenancy.' },
-            { id: '04', icon: <Briefcase />, name: 'Manage', desc: 'End-to-end investment property management — tenant sourcing, rent collection, maintenance and reporting.' }
-          ].map((service) => (
-            <motion.div 
-              {...fadeInUp}
-              key={service.id}
-              className="group bg-card p-12 relative overflow-hidden cursor-pointer transition-colors hover:bg-brand-night duration-300 border border-black/5"
-            >
-              <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-gold transition-all duration-500 group-hover:w-full" />
-              <div className="text-2xl mb-8 text-gold transition-colors">{service.icon}</div>
-              <div className="absolute top-6 right-7 font-serif text-5xl font-light text-black/[0.12] leading-none group-hover:text-white/[0.12] transition-colors">{service.id}</div>
-              <div className="font-serif text-2xl font-medium text-brand-night mb-4 group-hover:text-cream transition-colors">{service.name}</div>
-              <p className="text-[13px] leading-relaxed text-slate-500 group-hover:text-cream/60 transition-colors mb-8">{service.desc}</p>
-              <div className="text-xl text-slate-400 group-hover:text-gold transition-colors">→</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* SALES LISTINGS */}
-      <section className="px-[8vw] py-[120px] bg-slate-50/50" id="sales">
+      <section className="px-[8vw] py-[120px] bg-white" id="sales">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
           <div>
             <p className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Market Selection</p>
@@ -743,8 +712,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* LISTINGS */}
-      <section className="px-[8vw] pb-[120px]" id="listings">
+      {/* RENTAL LISTINGS */}
+      <section className="px-[8vw] pb-[120px] bg-white" id="listings">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
           <div>
             <p className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Featured Rentals</p>
@@ -832,37 +801,198 @@ export default function App() {
               {...fadeInUp}
               key={i}
               onClick={() => setViewedProperty(list)}
-              className="bg-card rounded-[4px] overflow-hidden border border-black/5 hover:-translate-y-1 transition-transform cursor-pointer"
+              className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
             >
-              <div className="h-[220px] relative overflow-hidden bg-brand-night">
+              <div className="h-[260px] relative overflow-hidden bg-brand-night">
                 <img 
                   src={list.img} 
                   alt={list.address} 
-                  className="w-full h-full object-cover opacity-80"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute top-4 left-4 bg-gold text-brand-night text-[10px] font-medium tracking-widest uppercase px-3 py-1.5 rounded-[2px]">For Rent</div>
+                <div className="absolute top-5 left-5 bg-brand-night text-gold text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">Rental</div>
               </div>
-              <div className="p-6">
-                <p className="text-[11px] tracking-widest uppercase text-slate-500 mb-2">{list.suburb}</p>
-                <p className="font-serif text-xl font-medium text-brand-night mb-4 leading-tight">{list.address}</p>
-                <p className="font-serif text-2xl font-medium text-brand-night mb-4">
-                  {list.price} <span className="font-sans text-[13px] font-normal text-slate-500">/ week</span>
-                </p>
-                <div className="flex gap-5 pt-4 border-t border-gold/10">
-                  <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
-                    <Bed size={15} className="text-gold" /> {list.beds}
+              <div className="p-8">
+                <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-bold mb-3">{list.suburb}</p>
+                <p className="font-serif text-2xl font-medium text-brand-night mb-2 leading-tight">{list.address}</p>
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className="font-serif text-xl font-medium text-brand-night/80">{list.price}</span>
+                  <span className="text-[12px] text-slate-400 italic">/ week</span>
+                </div>
+                <div className="flex gap-6 pt-5 border-t border-black/5">
+                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                    <span className="text-gold font-bold">{list.beds}</span> Bed
                   </div>
-                  <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
-                    <Bath size={15} className="text-gold" /> {list.bath}
+                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                    <span className="text-gold font-bold">{list.bath}</span> Bath
                   </div>
-                  <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
-                    <Car size={15} className="text-gold" /> {list.car}
+                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                    <span className="text-gold font-bold">{list.car}</span> Car
                   </div>
                 </div>
               </div>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section className="px-[8vw] py-[120px] bg-cream">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+          <div>
+            <p className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">What We Do</p>
+            <h2 className="font-serif text-[clamp(36px,4vw,56px)] font-light leading-[1.1] text-brand-night">
+              Complete Property<br /><em className="italic text-gold not-italic">Solutions</em>
+            </h2>
+          </div>
+          <a href="#" className="text-[12px] tracking-widest uppercase no-underline text-brand-night border-b border-brand-night pb-0.5 hover:text-gold hover:border-gold transition-all">
+            View all services →
+          </a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0.5">
+          {[
+            { id: '01', icon: <Home />, name: 'Buy', desc: 'Find your ideal home across Adelaide. We guide you through every step, from first inspection to settlement.' },
+            { id: '02', icon: <TrendingUp />, name: 'Sell', desc: 'Strategic marketing and expert negotiation to achieve the best possible price in the current market.' },
+            { id: '03', icon: <Key />, name: 'Rent', desc: 'Quality rental properties to suit every lifestyle and budget, with responsive support throughout your tenancy.' },
+            { id: '04', icon: <Briefcase />, name: 'Manage', desc: 'End-to-end investment property management — tenant sourcing, rent collection, maintenance and reporting.' }
+          ].map((service) => (
+            <motion.div 
+              {...fadeInUp}
+              key={service.id}
+              className="group bg-card p-12 relative overflow-hidden cursor-pointer transition-colors hover:bg-brand-night duration-300 border border-black/5"
+            >
+              <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-gold transition-all duration-500 group-hover:w-full" />
+              <div className="text-2xl mb-8 text-gold transition-colors">{service.icon}</div>
+              <div className="absolute top-6 right-7 font-serif text-5xl font-light text-black/[0.12] leading-none group-hover:text-white/[0.12] transition-colors">{service.id}</div>
+              <div className="font-serif text-2xl font-medium text-brand-night mb-4 group-hover:text-cream transition-colors">{service.name}</div>
+              <p className="text-[13px] leading-relaxed text-slate-500 group-hover:text-cream/60 transition-colors mb-8">{service.desc}</p>
+              <div className="text-xl text-slate-400 group-hover:text-gold transition-colors">→</div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+      
+      {/* MARKET INSIGHTS */}
+      <section className="bg-brand-night py-[140px] relative overflow-hidden">
+        {/* Background Geometric Elements */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(#C9A96E 1px, transparent 1px), linear-gradient(90deg, #C9A96E 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+
+        <div className="px-[8vw] relative z-10">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <motion.div {...fadeInUp}>
+              <p className="text-[11px] tracking-[0.4em] uppercase text-gold font-bold mb-6">Strategic Intelligence</p>
+              <h2 className="font-serif text-[clamp(36px,4.5vw,64px)] font-light leading-[1.05] text-cream mb-8">
+                Adelaide Market<br />
+                <em className="italic text-gold not-italic">Insights & Trends</em>
+              </h2>
+              <p className="text-[16px] leading-[1.8] text-cream/60 max-w-[480px] mb-10">
+                Navigate the South Australian property landscape with data-driven clarity. Our monthly insights provide the competitive edge you need to make informed investment and lifestyle decisions.
+              </p>
+              <div className="flex flex-wrap gap-6">
+                <button className="bg-gold text-brand-night px-8 py-4 rounded-[4px] text-[13px] font-bold tracking-widest uppercase flex items-center gap-3 transition-transform hover:scale-[1.02]">
+                  <span>Talk to a Strategy Expert</span>
+                  <ArrowRight size={18} />
+                </button>
+                <button className="border border-white/20 text-cream px-8 py-4 rounded-[4px] text-[13px] font-bold tracking-widest uppercase transition-colors hover:bg-white/5">
+                  View Market Blog
+                </button>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              style={{ perspective: 1000 }}
+              className="grid grid-cols-2 gap-4"
+            >
+              {[
+                { label: 'Median Growth', val: '+12.4%', icon: <TrendingUp /> },
+                { label: 'Days on Market', val: '22', icon: <BarChart3 /> },
+                { label: 'Rental Yield', val: '5.2%', icon: <PieChart /> },
+                { label: 'Auction Clear', val: '78%', icon: <Target /> }
+              ].map((stat, i) => (
+                <motion.div 
+                  key={i}
+                  whileHover={{ translateZ: 20, rotateY: -5, rotateX: 5 }}
+                  className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[12px] flex flex-col justify-between aspect-square group transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:bg-gold transition-colors group-hover:text-brand-night text-gold">
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <div className="text-[11px] tracking-widest uppercase text-gold/60 font-medium mb-1">{stat.label}</div>
+                    <div className="text-3xl font-serif text-cream">{stat.val}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* INVESTMENT OPPORTUNITIES */}
+      <section className="bg-cream py-[140px] relative overflow-hidden">
+        <div className="px-[8vw] relative z-10">
+          <div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+              <div>
+                <p className="text-[11px] tracking-[0.3em] uppercase text-gold font-bold mb-4">Investment Spotlights</p>
+                <h3 className="font-serif text-[clamp(32px,4vw,48px)] font-light text-brand-night leading-tight">Upcoming <em className="italic text-gold not-italic">Opportunities</em></h3>
+                <p className="text-slate-500 mt-4 max-w-xl">Data-backed analysis of South Australian suburbs with high potential for capital growth and rental yield.</p>
+              </div>
+              <div className="flex gap-4">
+                 <div className="w-12 h-12 rounded-full border border-gold/20 flex items-center justify-center text-brand-night/40 cursor-not-allowed">
+                    <ChevronLeft size={20} />
+                 </div>
+                 <div className="w-12 h-12 rounded-full border border-gold flex items-center justify-center text-gold cursor-pointer hover:bg-gold hover:text-brand-night transition-colors">
+                    <ArrowRight size={20} />
+                 </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { 
+                  title: 'North Adelaide', 
+                  tag: 'High Growth', 
+                  desc: 'Luxury urban expansion with increasing demand for modern architectural dwellings.',
+                  metric: 'Average 14.2% YoY' 
+                },
+                { 
+                  title: 'Port Adelaide', 
+                  tag: 'Hotspot', 
+                  desc: 'Revitalized waterfront precinct showing exceptional rental yields and redevelopment potential.',
+                  metric: 'Yield 6.1%' 
+                },
+                { 
+                  title: 'Unley Park', 
+                  tag: 'Premium Stable', 
+                  desc: 'Adelaide\'s most prestigious blue-chip suburb maintains steady capital appreciation.',
+                  metric: 'Growth index 112.4' 
+                }
+              ].map((suburb, i) => (
+                <div key={i} className="group relative bg-white p-10 rounded-[16px] border border-gold/10 hover:shadow-2xl transition-all duration-500 overflow-hidden">
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-gold/10 transition-colors" />
+                   
+                   <div className="relative z-10">
+                     <span className="inline-block text-[9px] tracking-[0.2em] uppercase px-3 py-1.5 bg-brand-night text-gold font-bold rounded-[2px] mb-6">
+                        {suburb.tag}
+                     </span>
+                     <h4 className="text-2xl font-serif text-brand-night mb-4">{suburb.title}</h4>
+                     <p className="text-[14px] text-slate-500 leading-relaxed mb-10">
+                        {suburb.desc}
+                     </p>
+                     <div className="pt-6 border-t border-gold/10 flex justify-between items-center text-gold">
+                        <span className="text-[11px] tracking-widest uppercase font-bold">{suburb.metric}</span>
+                        <div className="w-8 h-8 rounded-full bg-gold/5 flex items-center justify-center text-gold opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1">
+                           <ArrowRight size={14} />
+                        </div>
+                     </div>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

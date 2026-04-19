@@ -132,11 +132,11 @@ export default function PropertyDetails({ property, onBack, onMakeOffer }: Prope
                   <span className="text-[12px] tracking-[0.2em] uppercase font-bold">{property.suburb}</span>
                </div>
              </div>
-             <h1 className="font-serif text-[clamp(32px,5vw,64px)] font-medium text-brand-night leading-[1.1] tracking-tight max-w-3xl">{property.address}</h1>
+             <h1 className="font-serif text-[clamp(28px,4vw,42px)] font-medium text-brand-night leading-[1.1] tracking-tight max-w-3xl">{property.address}</h1>
           </div>
           <div className="bg-cream/40 px-12 py-10 rounded-[12px] border border-gold/15 min-w-[320px] w-full lg:w-auto shadow-inner text-center lg:text-left">
              <p className="text-[11px] tracking-[0.3em] uppercase text-gold font-bold mb-4">Market Valuation</p>
-             <div className="font-serif text-4xl md:text-6xl font-medium text-brand-night flex flex-col sm:flex-row items-baseline justify-center lg:justify-start gap-2">
+             <div className="font-serif text-3xl md:text-4xl font-medium text-brand-night flex flex-col sm:flex-row items-baseline justify-center lg:justify-start gap-2">
                 {property.price}
                 {property.type === 'Rental' && <span className="font-sans text-[18px] font-normal text-slate-400 italic">/ week</span>}
              </div>
