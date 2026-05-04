@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import PropertyDetails from './components/PropertyDetails';
 import MakeAnOffer from './components/MakeAnOffer';
@@ -37,6 +37,7 @@ import {
   ChevronDown,
   ChevronLeft,
   Key,
+  Lock,
   TrendingUp,
   Handshake,
   BarChart3,
@@ -46,6 +47,15 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // If no staging password is set in environment, bypass authentication
+    const stagingPassword = (import.meta as any).env.VITE_STAGING_PASSWORD;
+    if (!stagingPassword) return true;
+    
+    // Check local storage for existing session
+    return localStorage.getItem('aone_staging_auth') === 'true';
+  });
+
   const [activeTab, setActiveTab] = useState('Sell with AONE');
   const [activeMenu, setActiveMenu] = useState('Home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -73,8 +83,17 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-cream font-sans text-brand-night scroll-smooth">
-      {/* NAV */}
+    <AnimatePresence mode="wait">
+      {!isAuthenticated ? (
+        <StagingGate onAuthenticated={() => setIsAuthenticated(true)} />
+      ) : (
+        <motion.div 
+          key="content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen bg-cream font-sans text-brand-night scroll-smooth"
+        >
+          {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[4vw] h-[90px] bg-cream/98 backdrop-blur-xl border-b border-gold/30 shadow-sm transition-all duration-300">
         <div className="flex items-center cursor-pointer" onClick={() => { setViewedProperty(null); setShowOfferPage(false); setShowGuidePage(false); setShowAboutPage(false); }}>
           <img 
@@ -1309,7 +1328,102 @@ export default function App() {
           <p className="text-[12px] text-gold tracking-widest uppercase">RLA 309133</p>
         </div>
       </footer>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function StagingGate({ onAuthenticated }: { onAuthenticated: () => void }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+  const correctPassword = (import.meta as any).env.VITE_STAGING_PASSWORD;
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (password === correctPassword) {
+      localStorage.setItem('aone_staging_auth', 'true');
+      onAuthenticated();
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
+    }
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen bg-brand-night flex flex-col items-center justify-center px-6 relative overflow-hidden"
+    >
+      {/* Background patterns */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-[440px] bg-white/5 backdrop-blur-xl border border-white/10 p-10 md:p-12 rounded-[12px] shadow-2xl relative z-10 text-center"
+      >
+        <img 
+          src="https://aonerealestate.com.au/wp-content/uploads/2026/04/aone-logo.png" 
+          alt="A ONE Real Estate" 
+          className="h-[64px] w-auto mx-auto mb-10 brightness-0 invert"
+        />
+        
+        <div className="mb-8 text-center">
+          <h1 className="font-serif text-3xl text-cream mb-4">Staging Environment</h1>
+          <p className="text-cream/60 text-[14px] leading-relaxed">
+            This project is currently in staging and is password protected. Please enter the access code to preview the website.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="relative group text-left">
+            <div className="absolute inset-y-0 left-5 flex items-center text-gold/50 group-focus-within:text-gold transition-colors">
+              <Lock size={18} />
+            </div>
+            <input 
+              type="password" 
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError(false);
+              }}
+              placeholder="Enter Access Password"
+              className={`w-full bg-white/5 border ${error ? 'border-red-500/50 bg-red-500/5' : 'border-white/20 focus:border-gold'} text-cream px-14 py-5 rounded-[4px] outline-none transition-all placeholder:text-white/20 text-[14px] tracking-widest`}
+              autoFocus
+            />
+          </div>
+          
+          <button 
+            type="submit"
+            className="bg-gold text-brand-night w-full py-5 rounded-[4px] font-bold tracking-[0.2em] uppercase text-[13px] hover:bg-gold-light transition-all flex items-center justify-center gap-3 active:scale-[0.98] mt-2 group"
+          >
+            Enter Website
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+          </button>
+
+          <AnimatePresence>
+            {error && (
+              <motion.p 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="text-red-400 text-[12px] font-medium mt-2"
+              >
+                Incorrect password. Please resolve and try again.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </form>
+
+        <div className="mt-12 pt-10 border-t border-white/10">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-gold/40">© 2024 A ONE Real Estate • Authorized Access Only</p>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
