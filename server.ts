@@ -53,6 +53,15 @@ async function getEagleAccessToken() {
       body: JSON.stringify({ client_id: clientId, client_secret: clientSecret })
     },
     { 
+      name: 'Eagle v3 Token Bearer',
+      url: 'https://www.eagleagent.com.au/api/v3/token', 
+      headers: { 
+        'Authorization': `Bearer ${clientId}:${clientSecret}`,
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({})
+    },
+    { 
       name: 'Eagle v3 Token Basic Auth',
       url: 'https://www.eagleagent.com.au/api/v3/token', 
       headers: { 
