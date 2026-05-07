@@ -29,30 +29,6 @@ async function getEagleAccessToken() {
 
   const endpoints = [
     { 
-      name: 'Eagle v3 GraphQL Login Mutation (Snake)',
-      url: 'https://www.eagleagent.com.au/api/v3/graphql', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: `mutation login($client_id: String!, $client_secret: String!) { login(client_id: $client_id, client_secret: $client_secret) { token } }`,
-        variables: { client_id: clientId, client_secret: clientSecret }
-      })
-    },
-    { 
-      name: 'Eagle v3 GraphQL Login Mutation (Camel)',
-      url: 'https://www.eagleagent.com.au/api/v3/graphql', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: `mutation login($clientId: String!, $clientSecret: String!) { login(clientId: $clientId, clientSecret: $clientSecret) { token } }`,
-        variables: { clientId: clientId, clientSecret: clientSecret }
-      })
-    },
-    { 
-      name: 'Eagle v3 Token JSON',
-      url: 'https://www.eagleagent.com.au/api/v3/token', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret })
-    },
-    { 
       name: 'Eagle v3 Token Bearer (Curl Style)',
       url: 'https://www.eagleagent.com.au/api/v3/token', 
       headers: { 
