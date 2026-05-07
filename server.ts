@@ -53,13 +53,13 @@ async function getEagleAccessToken() {
       body: JSON.stringify({ client_id: clientId, client_secret: clientSecret })
     },
     { 
-      name: 'Eagle v3 Token Bearer',
+      name: 'Eagle v3 Token Bearer (Curl Style)',
       url: 'https://www.eagleagent.com.au/api/v3/token', 
       headers: { 
         'Authorization': `Bearer ${clientId}:${clientSecret}`,
         'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({})
+      body: undefined // No body, match curl
     },
     { 
       name: 'Eagle v3 Token Basic Auth',
@@ -68,7 +68,7 @@ async function getEagleAccessToken() {
         'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
         'Content-Type': 'application/json' 
       },
-      body: JSON.stringify({})
+      body: undefined // No body
     },
     { 
       name: 'Eagle v1 Token Client Credentials',
@@ -88,16 +88,22 @@ async function getEagleAccessToken() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); 
 
-      const response = await fetch(endpoint.url, {
+      const fetchOptions: any = {
         method: 'POST',
         headers: {
           ...endpoint.headers,
           'Accept': 'application/json',
           'User-Agent': 'AONE-RealEstate/1.0',
         },
-        body: endpoint.body,
         signal: controller.signal
-      }).finally(() => clearTimeout(timeoutId));
+      };
+
+      if (endpoint.body !== undefined) {
+        fetchOptions.body = endpoint.body;
+      }
+
+      const response = await fetch(endpoint.url, fetchOptions)
+        .finally(() => clearTimeout(timeoutId));
 
       const bodyText = await response.text();
       console.log(`[AUTH DEBUG] ${endpoint.name} response body:`, bodyText.substring(0, 500));
@@ -106,7 +112,17 @@ async function getEagleAccessToken() {
         console.log(`[AUTH] ${endpoint.name} succeeded (200 OK)`);
         try {
           const data = JSON.parse(bodyText);
-          const token = data.token || data.access_token || data.data?.login?.token || data.data?.token;
+          console.log(`[AUTH DEBUG] Data from ${endpoint.name}:`, JSON.stringify(data));
+          
+          let token: any = data.token || data.access_token || data.data?.login?.token || data.data?.token;
+          
+          // If the token is an object, check if it has a nested 'token' property
+          if (token && typeof token === 'object' && token.token) {
+            token = token.token;
+          }
+          
+          console.log(`[AUTH DEBUG] Extracted token:`, token, `Type:`, typeof token);
+          
           if (token) {
             console.log(`[AUTH] SUCCESS: token acquired from ${endpoint.name}`);
             cachedToken = typeof token === 'string' ? token : JSON.stringify(token);
@@ -115,7 +131,7 @@ async function getEagleAccessToken() {
           console.warn(`[AUTH] ${endpoint.name} failed to find token in JSON:`, bodyText.substring(0, 200));
         } catch (e) {
           // If not JSON, but the response was OK, maybe the body IS the token?
-          if (bodyText && bodyText.length > 20 && !bodyText.includes('<html')) {
+          if (bodyText && bodyText.length > 0 && !bodyText.includes('<html')) {
             console.log(`[AUTH] SUCCESS: treating raw response from ${endpoint.name} as token`);
             cachedToken = bodyText.trim();
             return cachedToken;
@@ -166,33 +182,33 @@ async function fetchGraphQL(query: string, variables: any = {}) {
       signal: controller.signal
     }).finally(() => clearTimeout(timeoutId));
 
-    console.log(`[GRAPHQL] Response Status: ${response.status} (Token prefix: ${token.substring(0, 6)}...)`);
+    const bodyText = await response.text();
+    console.log(`[GRAPHQL] Response Status: ${response.status}`);
+    console.log(`[GRAPHQL] Response Body (first 500 chars):`, bodyText.substring(0, 500));
     console.log(`[GRAPHQL] Authorization Header Used: Bearer ${token.substring(0, 10)}...`);
+    console.log(`[GRAPHQL] FULL TOKEN: ${token}`);
 
-  if (response.ok) {
-    const data = await response.json();
-    if (!data.errors) {
-      console.log(`[GRAPHQL] SUCCESS with ${url}`);
+    if (response.ok) {
+      const data = JSON.parse(bodyText);
+      if (!data.errors) {
+        console.log(`[GRAPHQL] SUCCESS with ${url}`);
+        return data;
+      }
+      console.warn(`[GRAPHQL] ${url} returned errors:`, JSON.stringify(data.errors));
+      
+      if (JSON.stringify(data.errors).toLowerCase().includes('unauthorized') || 
+          JSON.stringify(data.errors).toLowerCase().includes('token')) {
+        console.warn('[GRAPHQL] Unauthorized error detected in GraphQL response, clearing token cache');
+        cachedToken = null;
+      }
       return data;
+    } else {
+      console.warn(`[GRAPHQL] ${url} failed (${response.status}): ${bodyText.substring(0, 200)}`);
+      if (response.status === 401) {
+        console.warn('[GRAPHQL] 401 Unauthorized, clearing token cache');
+        cachedToken = null;
+      }
     }
-    console.warn(`[GRAPHQL] ${url} returned errors:`, JSON.stringify(data.errors));
-    
-    // If the error is an auth error, clear the cache and try again next time
-    if (JSON.stringify(data.errors).toLowerCase().includes('unauthorized') || 
-        JSON.stringify(data.errors).toLowerCase().includes('token')) {
-      console.warn('[GRAPHQL] Unauthorized error detected in GraphQL response, clearing token cache');
-      cachedToken = null;
-    }
-    return data;
-  } else {
-    const text = await response.text();
-    console.warn(`[GRAPHQL] ${url} failed (${response.status}): ${text.substring(0, 200)}`);
-    
-    if (response.status === 401) {
-      console.warn('[GRAPHQL] 401 Unauthorized, clearing token cache');
-      cachedToken = null;
-    }
-  }
   } catch (error: any) {
     console.error(`[GRAPHQL] Error with ${url}:`, error.message);
   }
