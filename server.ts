@@ -28,18 +28,6 @@ async function getEagleAccessToken() {
   }
 
   const endpoints = [
-    {
-      name: 'Static Secret (API Token)',
-      url: 'FORCE_STATIC',
-      headers: {},
-      body: clientSecret || ''
-    },
-    {
-      name: 'Static ID:Secret (Legacy Token)',
-      url: 'FORCE_STATIC',
-      headers: {},
-      body: `${clientId}:${clientSecret}`
-    },
     { 
       name: 'Eagle v3 GraphQL Login Mutation (Snake)',
       url: 'https://www.eagleagent.com.au/api/v3/graphql', 
@@ -86,11 +74,6 @@ async function getEagleAccessToken() {
   ];
 
   for (const endpoint of endpoints) {
-    if (endpoint.url === 'FORCE_STATIC') {
-      console.log(`[AUTH] Trying ${endpoint.name}`);
-      cachedToken = endpoint.body;
-      return cachedToken;
-    }
     try {
       console.log(`[AUTH] Trying ${endpoint.name}: ${endpoint.url}`);
       const controller = new AbortController();
@@ -108,6 +91,7 @@ async function getEagleAccessToken() {
       }).finally(() => clearTimeout(timeoutId));
 
       const bodyText = await response.text();
+      console.log(`[AUTH DEBUG] ${endpoint.name} response body:`, bodyText.substring(0, 500));
       
       if (response.ok) {
         console.log(`[AUTH] ${endpoint.name} succeeded (200 OK)`);
@@ -174,6 +158,7 @@ async function fetchGraphQL(query: string, variables: any = {}) {
     }).finally(() => clearTimeout(timeoutId));
 
     console.log(`[GRAPHQL] Response Status: ${response.status} (Token prefix: ${token.substring(0, 6)}...)`);
+    console.log(`[GRAPHQL] Authorization Header Used: Bearer ${token.substring(0, 10)}...`);
 
   if (response.ok) {
     const data = await response.json();
