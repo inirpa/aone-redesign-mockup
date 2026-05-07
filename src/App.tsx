@@ -67,9 +67,49 @@ export default function App() {
   const [initialOfferAddress, setInitialOfferAddress] = useState('');
 
   const [salesProperties, setSalesProperties] = useState<any[]>([]);
-  const [rentalProperties, setRentalProperties] = useState<any[]>([]);
+  const [rentalProperties, setRentalProperties] = useState<any[]>([
+    {
+      id: 'r1',
+      suburb: 'North Adelaide',
+      address: '15/88 O\'Connell Street',
+      price: '$550 / week',
+      beds: 2,
+      bath: 1,
+      car: 1,
+      description: 'Modern executive apartment in the heart of North Adelaide. Features include open plan living, private balcony, and secure underground parking.',
+      type: 'Rental',
+      img: 'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
+      images: ['https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80']
+    },
+    {
+      id: 'r2',
+      suburb: 'Glenelg',
+      address: '4/12 Colley Terrace',
+      price: '$720 / week',
+      beds: 3,
+      bath: 2,
+      car: 2,
+      description: 'Breathtaking beach front living. This spacious unit offers stunning sea views and is just steps away from Jetty Road.',
+      type: 'Rental',
+      img: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
+      images: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80']
+    },
+    {
+      id: 'r3',
+      suburb: 'Unley',
+      address: '22 King William Road',
+      price: '$480 / week',
+      beds: 1,
+      bath: 1,
+      car: 1,
+      description: 'Stylish studio apartment perfectly located for city workers. High ceilings, industrial feel, and amazing local cafes.',
+      type: 'Rental',
+      img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+      images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80']
+    }
+  ]);
   const [isLoadingSales, setIsLoadingSales] = useState(true);
-  const [isLoadingRentals, setIsLoadingRentals] = useState(true);
+  const [isLoadingRentals, setIsLoadingRentals] = useState(false);
 
   useEffect(() => {
     async function fetchProperties() {
@@ -79,11 +119,17 @@ export default function App() {
         const res = await fetch('/api/properties/sale');
         if (!res.ok) {
           const text = await res.text();
-          console.error(`Sales fetch failed with status ${res.status}:`, text);
+          console.error(`Sales fetch failed with status ${res.status}:`, text.substring(0, 500));
         } else {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            setSalesProperties(data);
+          const contentType = res.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              setSalesProperties(data);
+            }
+          } else {
+            const text = await res.text();
+            console.error('Sales: Expected JSON but got:', text.substring(0, 500));
           }
         }
       } catch (err) {
@@ -92,24 +138,8 @@ export default function App() {
         setIsLoadingSales(false);
       }
 
-      // Fetch Rentals
-      try {
-        console.log('Fetching rental properties...');
-        const res = await fetch('/api/properties/rental');
-        if (!res.ok) {
-          const text = await res.text();
-          console.error(`Rentals fetch failed with status ${res.status}:`, text);
-        } else {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            setRentalProperties(data);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching rentals (Network or Server Error):', err);
-      } finally {
-        setIsLoadingRentals(false);
-      }
+      // Skip Rentals for now as requested
+      setIsLoadingRentals(false);
     }
     fetchProperties();
   }, []);

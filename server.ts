@@ -211,6 +211,12 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // GLOBAL LOGGER
+  app.use((req, res, next) => {
+    console.log(`[SERVER] ${req.method} ${req.url}`);
+    next();
+  });
+
   // Request logger
   app.use((req, res, next) => {
     if (req.url.startsWith('/api')) {
@@ -301,8 +307,8 @@ async function startServer() {
 
   // API Route for Properties For Sale
   app.get('/api/properties/sale', async (req, res) => {
-    // Exact query string from user's successful curl
-    const query = 'query { properties(first: 3) { nodes { id formattedAddress price status images { url } bedrooms bathrooms carSpaces suburb { name } description } } }';
+    console.log('[API] Hit /api/properties/sale');
+    const query = 'query { properties(first: 3) { nodes { id formattedAddress price status } } }';
 
     try {
       const data = await fetchGraphQL(query);
@@ -315,17 +321,12 @@ async function startServer() {
 
       const listings = data.data.properties.nodes.map((node: any) => ({
         id: node.id,
-        suburb: node.suburb?.name || 'Suburb',
+        suburb: 'Property',
         address: node.formattedAddress,
         price: node.price,
         status: node.status,
-        beds: node.bedrooms || 0,
-        bath: node.bathrooms || 0,
-        car: node.carSpaces || 0,
-        description: node.description || '',
         type: 'For Sale',
-        img: node.images?.[0]?.url || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
-        images: node.images?.map((i: any) => i.url) || []
+        img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
       }));
 
       res.json(listings);
@@ -337,38 +338,49 @@ async function startServer() {
 
   // API Route for Rental Properties
   app.get('/api/properties/rental', async (req, res) => {
-    // Exact query string from user's successful curl
-    const query = 'query { properties(first: 3) { nodes { id formattedAddress price status images { url } bedrooms bathrooms carSpaces suburb { name } description } } }';
-
-    try {
-      const data = await fetchGraphQL(query);
-      
-      if (!data || !data.data || !data.data.properties) {
-        const errorMsg = data?.errors ? JSON.stringify(data.errors) : 'No properties found';
-        console.warn(`[RENTALS] Fetch failed: ${errorMsg}`);
-        return res.json([]);
-      }
-
-      const listings = data.data.properties.nodes.map((node: any) => ({
-        id: node.id,
-        suburb: node.suburb?.name || 'Suburb',
-        address: node.formattedAddress,
-        price: node.price,
-        status: node.status,
-        beds: node.bedrooms || 0,
-        bath: node.bathrooms || 0,
-        car: node.carSpaces || 0,
-        description: node.description || '',
+    console.log('[API] Hit /api/properties/rental - Returning Sample Data');
+    const sampleRentals = [
+      {
+        id: 'rental-1',
+        suburb: 'North Adelaide',
+        address: '15/88 O\'Connell Street',
+        price: '$550 / week',
+        beds: 2,
+        bath: 1,
+        car: 1,
+        description: 'Modern executive apartment in the heart of North Adelaide. Features include open plan living, private balcony, and secure underground parking.',
         type: 'Rental',
-        img: node.images?.[0]?.url || 'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
-        images: node.images?.map((i: any) => i.url) || []
-      }));
-
-      res.json(listings);
-    } catch (error: any) {
-      console.error('[RENTALS] Route Error:', error.message);
-      res.status(500).json({ error: error.message, lastAuthError });
-    }
+        img: 'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
+        images: ['https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80']
+      },
+      {
+        id: 'rental-2',
+        suburb: 'Glenelg',
+        address: '4/12 Colley Terrace',
+        price: '$720 / week',
+        beds: 3,
+        bath: 2,
+        car: 2,
+        description: 'Breathtaking beach front living. This spacious unit offers stunning sea views and is just steps away from Jetty Road.',
+        type: 'Rental',
+        img: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
+        images: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80']
+      },
+      {
+        id: 'rental-3',
+        suburb: 'Unley',
+        address: '22 King William Road',
+        price: '$480 / week',
+        beds: 1,
+        bath: 1,
+        car: 1,
+        description: 'Stylish studio apartment perfectly located for city workers. High ceilings, industrial feel, and amazing local cafes.',
+        type: 'Rental',
+        img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+        images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80']
+      }
+    ];
+    res.json(sampleRentals);
   });
 
   // STATIC TEST ROUTE
@@ -384,6 +396,16 @@ async function startServer() {
       type: 'For Sale',
       img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80'
     }]);
+  });
+
+  // CATCH ALL FOR UNMATCHED /api ROUTES
+  app.all('/api/*', (req, res) => {
+    console.warn(`[API 404] Unmatched API route: ${req.method} ${req.url}`);
+    res.status(404).json({ 
+      error: 'API route not found', 
+      method: req.method,
+      path: req.url 
+    });
   });
 
   // Vite middleware for development
