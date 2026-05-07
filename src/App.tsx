@@ -66,6 +66,54 @@ export default function App() {
   const [showAboutPage, setShowAboutPage] = useState(false);
   const [initialOfferAddress, setInitialOfferAddress] = useState('');
 
+  const [salesProperties, setSalesProperties] = useState<any[]>([]);
+  const [rentalProperties, setRentalProperties] = useState<any[]>([]);
+  const [isLoadingSales, setIsLoadingSales] = useState(true);
+  const [isLoadingRentals, setIsLoadingRentals] = useState(true);
+
+  useEffect(() => {
+    async function fetchProperties() {
+      // Fetch Sales
+      try {
+        console.log('Fetching sales properties...');
+        const res = await fetch('/api/properties/sale');
+        if (!res.ok) {
+          const text = await res.text();
+          console.error(`Sales fetch failed with status ${res.status}:`, text);
+        } else {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setSalesProperties(data);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching sales (Network or Server Error):', err);
+      } finally {
+        setIsLoadingSales(false);
+      }
+
+      // Fetch Rentals
+      try {
+        console.log('Fetching rental properties...');
+        const res = await fetch('/api/properties/rental');
+        if (!res.ok) {
+          const text = await res.text();
+          console.error(`Rentals fetch failed with status ${res.status}:`, text);
+        } else {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setRentalProperties(data);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching rentals (Network or Server Error):', err);
+      } finally {
+        setIsLoadingRentals(false);
+      }
+    }
+    fetchProperties();
+  }, []);
+
   // Scroll to top on page switch
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -619,115 +667,57 @@ export default function App() {
           </a>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            { 
-              suburb: 'Marion', 
-              address: '45 Diagonal Road', 
-              price: '$850,000 - $920,000', 
-              beds: 4, 
-              bath: 2, 
-              car: 2, 
-              type: 'For Sale',
-              description: 'This masterfully designed 4-bedroom residence in the heart of Marion represents the pinnacle of modern suburban living. Boasting expansive living areas and high-end finishes...',
-              img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
-              images: [
-                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200',
-                'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800',
-                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
-              ],
-              agent: {
-                name: 'Sarah Johnson',
-                role: 'Senior Sales Agent',
-                phone: '0400 123 456',
-                email: 'sarah@aonerealestate.com.au',
-                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
-              }
-            },
-            { 
-              suburb: 'Brighton', 
-              address: '78 Jetty Road', 
-              price: 'Auction', 
-              beds: 3, 
-              bath: 2, 
-              car: 2, 
-              type: 'For Sale',
-              description: 'A coastal masterpiece just moments from the pristine sands of Brighton Beach. This 3-bedroom jewel offers an unparalleled lifestyle in one of Adelaide\'s most sought-after locations...',
-              img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80',
-              images: [
-                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200',
-                'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800',
-                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
-              ],
-              agent: {
-                name: 'Michael Chen',
-                role: 'Area Specialist',
-                phone: '0411 987 654',
-                email: 'michael@aonerealestate.com.au',
-                image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300'
-              }
-            },
-            { 
-              suburb: 'Ascot Park', 
-              address: '12 Seventh Avenue', 
-              price: '$720,000', 
-              beds: 3, 
-              bath: 1, 
-              car: 1, 
-              type: 'For Sale',
-              description: 'Retain the character of the past while enjoying modern amenities in this beautifully maintained 1950s cottage. Perfect for first home buyers or savvy investors looking for a prime location...',
-              img: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=600&q=80',
-              images: [
-                'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200',
-                'https://images.unsplash.com/photo-1600585154526-990dcea4db0d?auto=format&fit=crop&w=800',
-                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
-              ],
-              agent: {
-                name: 'Sarah Johnson',
-                role: 'Senior Sales Agent',
-                phone: '0400 123 456',
-                email: 'sarah@aonerealestate.com.au',
-                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
-              }
-            }
-          ].map((list, i) => (
-            <motion.div 
-              {...fadeInUp}
-              key={i}
-              onClick={() => setViewedProperty(list)}
-              className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            >
-              <div className="h-[260px] relative overflow-hidden bg-brand-night">
-                <img 
-                  src={list.img} 
-                  alt={list.address} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute top-5 left-5 bg-brand-night text-gold text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">For Sale</div>
-                {list.price === 'Auction' && (
-                  <div className="absolute top-5 right-5 bg-gold text-brand-night text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">Auction</div>
-                )}
-              </div>
-              <div className="p-8">
-                <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-bold mb-3">{list.suburb}</p>
-                <p className="font-serif text-2xl font-medium text-brand-night mb-2 leading-tight">{list.address}</p>
-                <p className="font-serif text-xl font-medium text-brand-night/80 mb-6">
-                  {list.price}
-                </p>
-                <div className="flex gap-6 pt-5 border-t border-black/5">
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <Bed size={16} className="text-gold" /> {list.beds}
-                  </div>
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <Bath size={16} className="text-gold" /> {list.bath}
-                  </div>
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <Car size={16} className="text-gold" /> {list.car}
+          {isLoadingSales ? (
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20">
+               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
+               <p className="text-muted tracking-widest uppercase text-[12px]">Fetching premium listings...</p>
+            </div>
+          ) : salesProperties.length > 0 ? (
+            salesProperties.map((list, i) => (
+              <motion.div 
+                {...fadeInUp}
+                key={list.id || i}
+                onClick={() => setViewedProperty(list)}
+                className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
+              >
+                <div className="h-[260px] relative overflow-hidden bg-brand-night">
+                  <img 
+                    src={list.img} 
+                    alt={list.address} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-5 left-5 bg-brand-night text-gold text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">{list.type || 'For Sale'}</div>
+                  {list.price === 'Auction' && (
+                    <div className="absolute top-5 right-5 bg-gold text-brand-night text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">Auction</div>
+                  )}
+                </div>
+                <div className="p-8">
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-bold mb-3">{list.suburb}</p>
+                  <p className="font-serif text-2xl font-medium text-brand-night mb-2 leading-tight">{list.address}</p>
+                  <p className="font-serif text-xl font-medium text-brand-night/80 mb-6">
+                    {list.price}
+                  </p>
+                  <div className="flex gap-6 pt-5 border-t border-black/5">
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Bed size={16} className="text-gold" /> {list.beds}
+                    </div>
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Bath size={16} className="text-gold" /> {list.bath}
+                    </div>
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Car size={16} className="text-gold" /> {list.car}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 bg-cream/30 border border-gold/10 rounded-lg">
+               <p className="text-brand-night italic mb-2">No active listings found at the moment.</p>
+               <p className="text-[12px] text-muted uppercase tracking-widest">Live from Eagle CRM</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -745,113 +735,55 @@ export default function App() {
           </a>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { 
-              suburb: 'Craigmore', 
-              address: '23 Chelmsford Street', 
-              price: '$680', 
-              beds: 4, 
-              bath: 2, 
-              car: 2, 
-              type: 'Rental',
-              description: 'Experience refined living in this contemporary family residence located in the heart of Craigmore. This spacious 4-bedroom home offers a perfect blend of modern comfort and functional design...',
-              img: 'https://aonerealestate.com.au/wp-content/uploads/2026/03/uploads1773975848813-zz94m7n96u-062143486b6658ee93177071924e7184main.jpg',
-              images: [
-                'https://aonerealestate.com.au/wp-content/uploads/2026/03/uploads1773975848813-zz94m7n96u-062143486b6658ee93177071924e7184main.jpg',
-                'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800',
-                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
-              ],
-              agent: {
-                name: 'Sarah Johnson',
-                role: 'Senior Property Manager',
-                phone: '0400 123 456',
-                email: 'sarah@aonerealestate.com.au',
-                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
-              }
-            },
-            { 
-              suburb: 'Dover Gardens', 
-              address: '121B Sturt Road', 
-              price: '$750', 
-              beds: 3, 
-              bath: 2, 
-              car: 1, 
-              type: 'Rental',
-              description: 'Exquisitely renovated and perfectly positioned, this 3-bedroom townhouse in Dover Gardens provides a sophisticated urban oasis. Featuring high ceilings, open-plan living, and a private courtyard...',
-              img: 'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774496182720-jdaqa9xht7t-f3fef655796da46e15bacd2885542c54AB240598_hdr-1.jpg',
-              images: [
-                'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774496182720-jdaqa9xht7t-f3fef655796da46e15bacd2885542c54AB240598_hdr-1.jpg',
-                'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=800',
-                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
-              ],
-              agent: {
-                name: 'Michael Chen',
-                role: 'Property Manager',
-                phone: '0411 987 654',
-                email: 'michael@aonerealestate.com.au',
-                image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300'
-              }
-            },
-            { 
-              suburb: 'Paradise', 
-              address: '18 Clark Crescent', 
-              price: '$690', 
-              beds: 4, 
-              bath: 2, 
-              car: 2, 
-              type: 'Rental',
-              description: 'A delightful family retreat in the serene suburb of Paradise. This 4-bedroom home is designed for both entertainment and relaxation, featuring two spacious living zones and a north-facing deck...',
-              img: 'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774837414656-85p0k3u8puk-28494fa9800ffb261acb1e70437083aemain.jpg',
-              images: [
-                'https://aonerealestate.com.au/wp-content/uploads/2026/04/uploads1774837414656-85p0k3u8puk-28494fa9800ffb261acb1e70437083aemain.jpg',
-                'https://images.unsplash.com/photo-1600585154526-990dcea4db0d?auto=format&fit=crop&w=800',
-                'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800'
-              ],
-              agent: {
-                name: 'Sarah Johnson',
-                role: 'Senior Property Manager',
-                phone: '0400 123 456',
-                email: 'sarah@aonerealestate.com.au',
-                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300'
-              }
-            }
-          ].map((list, i) => (
-            <motion.div 
-              {...fadeInUp}
-              key={i}
-              onClick={() => setViewedProperty(list)}
-              className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            >
-              <div className="h-[260px] relative overflow-hidden bg-brand-night">
-                <img 
-                  src={list.img} 
-                  alt={list.address} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute top-5 left-5 bg-brand-night text-gold text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">Rental</div>
-              </div>
-              <div className="p-8">
-                <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-bold mb-3">{list.suburb}</p>
-                <p className="font-serif text-2xl font-medium text-brand-night mb-2 leading-tight">{list.address}</p>
-                <div className="flex items-baseline gap-2 mb-6">
-                  <span className="font-serif text-xl font-medium text-brand-night/80">{list.price}</span>
-                  <span className="text-[12px] text-slate-400 italic">/ week</span>
+          {isLoadingRentals ? (
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20">
+               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
+               <p className="text-muted tracking-widest uppercase text-[12px]">Loading rental properties...</p>
+            </div>
+          ) : rentalProperties.length > 0 ? (
+            rentalProperties.map((list, i) => (
+              <motion.div 
+                {...fadeInUp}
+                key={list.id || i}
+                onClick={() => setViewedProperty(list)}
+                className="group bg-white rounded-[12px] overflow-hidden border border-black/5 hover:shadow-2xl transition-all duration-500 cursor-pointer"
+              >
+                <div className="h-[260px] relative overflow-hidden bg-brand-night">
+                  <img 
+                    src={list.img} 
+                    alt={list.address} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-5 left-5 bg-brand-night text-gold text-[10px] font-bold tracking-[0.15em] uppercase px-4 py-2 rounded-[4px] shadow-lg">Rental</div>
                 </div>
-                <div className="flex gap-6 pt-5 border-t border-black/5">
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <span className="text-gold font-bold">{list.beds}</span> Bed
+                <div className="p-8">
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-gold font-bold mb-3">{list.suburb}</p>
+                  <p className="font-serif text-2xl font-medium text-brand-night mb-2 leading-tight">{list.address}</p>
+                  <div className="flex items-baseline gap-2 mb-6">
+                    <span className="font-serif text-xl font-medium text-brand-night/80">{list.price}</span>
+                    <span className="text-[11px] uppercase tracking-widest text-muted">per week</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <span className="text-gold font-bold">{list.bath}</span> Bath
-                  </div>
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <span className="text-gold font-bold">{list.car}</span> Car
+                  <div className="flex gap-6 pt-5 border-t border-black/5">
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Bed size={16} className="text-gold" /> {list.beds}
+                    </div>
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Bath size={16} className="text-gold" /> {list.bath}
+                    </div>
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Car size={16} className="text-gold" /> {list.car}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 bg-cream/30 border border-gold/10 rounded-lg">
+               <p className="text-brand-night italic mb-2">No active rentals found at the moment.</p>
+               <p className="text-[12px] text-muted uppercase tracking-widest">Live from Eagle CRM</p>
+            </div>
+          )}
         </div>
       </section>
 
