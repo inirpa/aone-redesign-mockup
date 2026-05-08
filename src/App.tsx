@@ -79,7 +79,12 @@ export default function App() {
       description: 'Modern executive apartment in the heart of North Adelaide. Features include open plan living, private balcony, and secure underground parking.',
       type: 'Rental',
       img: 'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
-      images: ['https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80']
+      images: [
+        'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       id: 'r2',
@@ -92,7 +97,11 @@ export default function App() {
       description: 'Breathtaking beach front living. This spacious unit offers stunning sea views and is just steps away from Jetty Road.',
       type: 'Rental',
       img: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
-      images: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80']
+      images: [
+        'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1600607687960-4a21d319e741?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       id: 'r3',
@@ -104,8 +113,14 @@ export default function App() {
       car: 1,
       description: 'Stylish studio apartment perfectly located for city workers. High ceilings, industrial feel, and amazing local cafes.',
       type: 'Rental',
-      img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-      images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80']
+      img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80',
+      images: [
+        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1505691938895-1758d7eaa511?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1536376074432-ad7374f11bd4?auto=format&fit=crop&w=600&q=80'
+      ]
     }
   ]);
   const [isLoadingSales, setIsLoadingSales] = useState(true);

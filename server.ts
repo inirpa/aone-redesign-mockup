@@ -330,23 +330,53 @@ async function startServer() {
 
     try {
       // We still try to fetch real data but if it fails we have a fallback or we can just send sample for now
-      const query = 'query { properties(first: 3) { nodes { id formattedAddress price status } } }';
+      const query = `
+        query { 
+          properties(first: 20) { 
+            nodes { 
+              id 
+              formattedAddress 
+              price 
+              status 
+              bedrooms
+              bathrooms
+              carSpaces
+              description
+              photos {
+                url
+              }
+            } 
+          } 
+        }
+      `;
       const data = await fetchGraphQL(query);
       
       if (data && data.data && data.data.properties) {
-        const listings = data.data.properties.nodes.map((node: any) => ({
-          id: node.id,
-          suburb: 'Property',
-          address: node.formattedAddress,
-          price: node.price,
-          status: node.status,
-          beds: 0,
-          bath: 0,
-          car: 0,
-          type: 'For Sale',
-          img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
-        }));
+        console.log(`[SALES] Successfully fetched ${data.data.properties.nodes.length} listings`);
+        const listings = data.data.properties.nodes.map((node: any) => {
+          // Get photos and provide fallbacks
+          const propertyPhotos = node.photos && node.photos.length > 0 
+            ? node.photos.map((p: any) => p.url) 
+            : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80'];
+
+          return {
+            id: node.id,
+            suburb: node.formattedAddress.split(',').slice(-2, -1)[0]?.trim() || 'Property',
+            address: node.formattedAddress,
+            price: node.price || 'Contact Agent',
+            status: node.status,
+            beds: node.bedrooms || 0,
+            bath: node.bathrooms || 0,
+            car: node.carSpaces || 0,
+            description: node.description || 'No description available.',
+            type: 'For Sale',
+            img: propertyPhotos[0],
+            images: propertyPhotos
+          };
+        });
         return res.json(listings);
+      } else {
+        console.log(`[SALES] No listings found or structure invalid. Data:`, JSON.stringify(data));
       }
     } catch (err) {
       console.error('[SALES] Real fetch failed, returning sample', err);
@@ -362,7 +392,7 @@ async function startServer() {
       {
         id: 'rental-1',
         suburb: 'North Adelaide',
-        address: '15/88 O\'Connell Street',
+        address: "15/88 O'Connell Street",
         price: '$550 / week',
         beds: 2,
         bath: 1,
@@ -370,7 +400,12 @@ async function startServer() {
         description: 'Modern executive apartment in the heart of North Adelaide. Features include open plan living, private balcony, and secure underground parking.',
         type: 'Rental',
         img: 'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
-        images: ['https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80']
+        images: [
+          'https://images.unsplash.com/photo-1560184897-67f4a3f9a7fa?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80'
+        ]
       },
       {
         id: 'rental-2',
@@ -383,7 +418,11 @@ async function startServer() {
         description: 'Breathtaking beach front living. This spacious unit offers stunning sea views and is just steps away from Jetty Road.',
         type: 'Rental',
         img: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
-        images: ['https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80']
+        images: [
+          'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1600607687960-4a21d319e741?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=600&q=80'
+        ]
       },
       {
         id: 'rental-3',
@@ -395,8 +434,14 @@ async function startServer() {
         car: 1,
         description: 'Stylish studio apartment perfectly located for city workers. High ceilings, industrial feel, and amazing local cafes.',
         type: 'Rental',
-        img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-        images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80']
+        img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1505691938895-1758d7eaa511?auto=format&fit=crop&w=600&q=80',
+          'https://images.unsplash.com/photo-1536376074432-ad7374f11bd4?auto=format&fit=crop&w=600&q=80'
+        ]
       }
     ];
     res.json(sampleRentals);

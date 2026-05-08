@@ -22,7 +22,11 @@ import {
   Star,
   Home,
   X,
-  ChevronRight
+  ChevronRight,
+  MessageCircle,
+  Link as LinkIcon,
+  Check,
+  Facebook
 } from 'lucide-react';
 
 interface PropertyDetailsProps {
@@ -35,6 +39,44 @@ interface PropertyDetailsProps {
 export default function PropertyDetails({ property, onBack, onMakeOffer }: PropertyDetailsProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+      setIsShareMenuOpen(false);
+    }, 2000);
+  };
+
+  const shareOptions = [
+    {
+      name: 'Facebook',
+      icon: <Facebook size={18} />,
+      onClick: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank'),
+      color: 'hover:text-blue-600'
+    },
+    {
+      name: 'WhatsApp',
+      icon: <MessageCircle size={18} />,
+      onClick: () => window.open(`https://wa.me/?text=${encodeURIComponent(property.address + ' ' + window.location.href)}`, '_blank'),
+      color: 'hover:text-green-500'
+    },
+    {
+      name: 'Email',
+      icon: <Mail size={18} />,
+      onClick: () => window.open(`mailto:?subject=${encodeURIComponent(property.address)}&body=${encodeURIComponent("Check out this property: " + window.location.href)}`, '_blank'),
+      color: 'hover:text-gold'
+    },
+    {
+      name: copied ? 'Link Copied!' : 'Copy Link',
+      icon: copied ? <Check size={18} className="text-green-500" /> : <LinkIcon size={18} />,
+      onClick: handleCopyLink,
+      color: 'hover:text-gold'
+    }
+  ];
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -57,67 +99,130 @@ export default function PropertyDetails({ property, onBack, onMakeOffer }: Prope
           <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
           Back to Listings
         </button>
-        <div className="flex gap-4">
-          <button className="p-2.5 rounded-full border border-gold/20 hover:bg-gold/5 text-brand-night transition-colors">
+        <div className="flex gap-4 relative">
+          <button 
+            onClick={() => setIsShareMenuOpen(!isShareMenuOpen)}
+            className={`p-2.5 rounded-full border transition-all ${isShareMenuOpen ? 'bg-brand-night text-gold border-brand-night shadow-lg' : 'border-gold/20 hover:bg-gold/5 text-brand-night'}`}
+          >
             <Share2 size={18} />
           </button>
-          <button className="p-2.5 rounded-full border border-gold/20 hover:bg-gold/5 text-brand-night transition-colors">
-            <Heart size={18} />
-          </button>
+
+          <AnimatePresence>
+            {isShareMenuOpen && (
+              <>
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-40"
+                  onClick={() => setIsShareMenuOpen(false)}
+                />
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 top-full mt-3 w-64 bg-brand-night border border-gold/30 rounded-[12px] shadow-2xl p-2 z-50 overflow-hidden"
+                >
+                  <div className="text-[9px] uppercase tracking-[0.3em] font-bold text-gold px-4 py-3 bg-white/5 border-b border-white/10 mb-1">
+                    Share Property
+                  </div>
+                  <div className="space-y-1">
+                    {shareOptions.map((option, idx) => (
+                      <button
+                        key={idx}
+                        onClick={option.onClick}
+                        className={`w-full flex items-center gap-4 px-4 py-3.5 text-cream hover:bg-white/5 rounded-[8px] transition-all text-[13px] font-medium group ${option.color}`}
+                      >
+                        <div className="text-gold group-hover:scale-110 transition-transform">
+                          {option.icon}
+                        </div>
+                        {option.name}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold/0 via-gold/50 to-gold/0" />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* HERO GALLERY */}
       <section className="px-[4vw] pt-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-[65vh]">
+          {/* Main Showcase Image */}
           <div 
-            className="lg:col-span-8 h-[380px] md:h-[500px] lg:h-full rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
+            className={`${property.images?.length > 1 ? 'lg:col-span-8' : 'lg:col-span-12'} h-[380px] md:h-[500px] lg:h-full rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md`}
             onClick={() => {
               setActiveImageIndex(0);
               setIsGalleryOpen(true);
             }}
           >
             <img 
-              src={property.images[0]} 
+              src={property.images?.[0] || property.img} 
               alt={property.address} 
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-brand-night/10 group-hover:bg-brand-night/0 transition-colors duration-500" />
+            
+            {(!property.images || property.images.length <= 1) && (
+              <div className="absolute bottom-6 right-6 bg-brand-night/60 backdrop-blur-md text-cream px-4 py-2 rounded-full text-[12px] tracking-widest uppercase font-bold border border-gold/20">
+                1 Photo
+              </div>
+            )}
           </div>
-          <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 h-[180px] md:h-[250px] lg:h-full">
-            <div 
-              className="rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
-              onClick={() => {
-                setActiveImageIndex(1);
-                setIsGalleryOpen(true);
-              }}
-            >
-              <img 
-                src={property.images[1]} 
-                alt="Property Detail 1" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <div 
-              className="rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
-              onClick={() => {
-                setActiveImageIndex(2);
-                setIsGalleryOpen(true);
-              }}
-            >
-              <img 
-                src={property.images[2]} 
-                alt="Property Detail 2" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-brand-night/40 flex items-center justify-center text-cream font-medium tracking-[0.2em] uppercase text-[10px] md:text-sm backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity">
-                View All Photos
+
+          {/* Side Gird Images */}
+          {property.images?.length > 1 && (
+            <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 lg:grid-rows-2 gap-4 h-[180px] md:h-[250px] lg:h-full">
+              <div 
+                className="rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
+                onClick={() => {
+                  setActiveImageIndex(1);
+                  setIsGalleryOpen(true);
+                }}
+              >
+                <img 
+                  src={property.images[1]} 
+                  alt="Property Detail 1" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+
+              <div 
+                className="rounded-[12px] overflow-hidden relative group cursor-pointer shadow-md"
+                onClick={() => {
+                  setActiveImageIndex(2);
+                  setIsGalleryOpen(true);
+                }}
+              >
+                {property.images.length > 2 ? (
+                  <>
+                    <img 
+                      src={property.images[2]} 
+                      alt="Property Detail 2" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-brand-night/50 flex flex-col items-center justify-center text-cream text-center p-4">
+                      <div className="text-[10px] md:text-[12px] tracking-[0.2em] uppercase font-bold mb-1">View All</div>
+                      <div className="text-xl md:text-2xl font-serif italic text-gold">
+                        {property.images.length > 3 ? `+${property.images.length - 2}` : 'Gallery'}
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-white/5 border border-gold/10 flex flex-col items-center justify-center text-brand-night/40">
+                    <div className="text-[10px] tracking-widest uppercase font-bold">View Gallery</div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
